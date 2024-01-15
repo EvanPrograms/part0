@@ -10,33 +10,34 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
-  const increaseToValue = (props) => {
-    if (props === good) {
+  const increaseToValue = (props, name) => {
+    if (name === 'good') {
       setGood(props + 1)
       console.log('good:', good, 'neutral:', neutral, 'bad:', bad)
-    } else if (props === neutral) {
+    } else if (name === 'neutral') {
         setNeutral(props + 1)
         console.log('good:', good, 'neutral:', neutral, 'bad:', bad)
     } else {
-      setBad(props + 1)
-      console.log('good:', good, 'neutral:', neutral, 'bad:', bad)
+        setBad(props + 1)
+        console.log('good:', good, 'neutral:', neutral, 'bad:', bad)
       }
     }
 
   return (
     <div>
       <h1>give feedback</h1>
-      <Button handleClick={() => increaseToValue(good)} name="good" />
-      <Button handleClick={() => increaseToValue(neutral)} name="neutral" />
-      <Button handleClick={() => increaseToValue(bad)} name="bad" />
+      <Button handleClick={() => increaseToValue(good, 'good')} name="good" />
+      <Button handleClick={() => increaseToValue(neutral, 'neutral')} name="neutral" />
+      <Button handleClick={() => increaseToValue(bad, 'bad')} name="bad" />
       <h1>statistics</h1>
       <p>
         good {good} <br />
         neutral {neutral} <br />
-        bad {bad}
+        bad {bad} <br />
       </p>
     </div>
   )
 }
 
 export default App
+
