@@ -1,3 +1,5 @@
+// only issue is that vote ticker doesn't update on vote. Could not figure out.
+
 import { useState } from 'react'
 import { Fragment } from 'react'
  
