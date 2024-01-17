@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Fragment } from 'react'
- 
-
 
 const Button = (props) => {
   return (
@@ -27,6 +25,15 @@ const VoteTally = (props) => {
   )
 }
 
+const VoteLeader = (props) => {
+  return (
+    <p>
+      {props.anecdotes[props.vote.indexOf(Math.max(...props.vote))]} <br />
+      has {props.vote[props.vote.indexOf(Math.max(...props.vote))]} votes
+    </p>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -42,14 +49,9 @@ const App = () => {
   const votes = Array(anecdotes.length).fill(0)
    
   const [selected, setSelected] = useState(0)
-  const [voteCopy, setVoteCopy] = useState([...votes])
+  const [vote, setVote] = useState(votes)
 
-  function voteIncrease(selection, array) {
-    const usedArray = array
-    usedArray[selection] += 1
-    setVoteCopy(usedArray)
-  }
-
+  const voteCopy = [...vote]
 
   return (
     
@@ -57,7 +59,7 @@ const App = () => {
       <h1>Anecdote of the day</h1>
       <Random value={selected} anecdotes={anecdotes}/>
       <VoteTally currentVote={voteCopy[selected]}/>
-      <Button handleClick={() => {voteIncrease(selected, voteCopy)}} name="vote"/>
+      <Button handleClick={() => {voteCopy[selected] += 1; setVote(voteCopy)}} name="vote"/>
       <Button handleClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))} name="next anecdote"/>
     </div>
   )
