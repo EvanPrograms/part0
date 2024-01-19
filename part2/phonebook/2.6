@@ -1,0 +1,57 @@
+import { useState } from 'react'
+import { Fragment } from 'react'
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas' }
+  ]) 
+  const [newName, setNewName] = useState('')
+
+  const addName = (event) => {
+    event.preventDefault()
+    console.log('button clicked', event.target)
+    const nameObject = {
+      name: newName
+    }
+    setPersons(persons.concat(nameObject))
+    setNewName('')
+    console.log(persons, newName)
+  }
+
+  const handleNameChange = (event) => {
+    console.log(event.target.value)
+    setNewName(event.target.value)
+  }
+
+  const Entries = (props) => {
+    return (
+      <p>
+        {props.entries.map((entry) =>
+        <Fragment key={entry.name}>
+          {entry.name}
+          <br />
+        </Fragment>
+        )}
+      </p>
+    )
+  }
+
+  return (
+    <div>
+      <div>debug: {newName}</div>
+      <h2>Phonebook</h2>
+      <form onSubmit={addName}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      <Entries entries={persons}/>
+    </div>
+  )
+}
+
+export default App
