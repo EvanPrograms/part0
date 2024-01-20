@@ -1,0 +1,11 @@
+const Entries = (props) => {
+    return (
+      <div>
+        {props.entries.map((entry) =>
+        <div key={entry.name}>{entry.name} {entry.number}</div>
+        )}
+      </div>
+    )
+  }
+
+  export default Entries
