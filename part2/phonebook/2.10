@@ -1,0 +1,24 @@
+import { useState } from 'react'
+import Entries from './components/Entries'
+import SearchNames from './components/SearchNames'
+import AddNew from './components/AddNew'
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas',
+      number: "040-123-4567" }
+  ]) 
+  
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <SearchNames names={persons} setpersons={setPersons}/>
+      <h3>add a new</h3>
+      <AddNew names={persons} setpersons={setPersons}/>
+      <h3>Numbers</h3>
+      <Entries entries={persons}/>
+    </div>
+  )
+}
+
+export default App
