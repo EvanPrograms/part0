@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import noteService from  '../services/phonebook'
 
 const AddNew = (props) => {
     const [newName, setNewName] = useState('')
@@ -21,7 +22,10 @@ const AddNew = (props) => {
         number: newNumber
       }
       if (props.names.some(person => person.name === nameObject.name) === false) {
-        props.setpersons(props.names.concat(nameObject))   
+        props.setpersons(props.names.concat(nameObject))
+        noteService
+          .create(nameObject)
+          .then(response => {response.data; props.setRequestData(new Date())})
         console.log("NAME NOT IN DATABASE")
       } else {
         window.alert(`${newName} is already in the phonebook`)
