@@ -28,8 +28,15 @@ const AddNew = (props) => {
           .then(response => {response.data; props.setRequestData(new Date())})
         console.log("NAME NOT IN DATABASE")
       } else {
-        window.alert(`${newName} is already in the phonebook`)
-        console.log("NAME ALREADY IN DATABASE")
+        const identity = props.names.find(person => person.name === nameObject.name)
+        const confirmation = window.confirm(
+          `${newName} is already in the phonebook, would you like to replace the old number with a new one?`
+          )
+        if (confirmation) {
+          noteService
+          .update(identity.id, nameObject)
+          .then(response => {response.data; props.setRequestData(new Date())})
+        }
       }
       setNewName('')
       setNewNumber('')
