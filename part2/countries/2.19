@@ -1,0 +1,139 @@
+import { useState, useEffect } from 'react'
+import noteService from './services/countries'
+
+const Notification = ({ error }) => {
+  if (error === null ) {
+    return null
+  }
+
+  return ( 
+    <div className='error'>
+      {error}
+    </div>
+  )
+}
+
+const Search = () => {
+  const [input, setInput] = useState('Fi')
+  const [countries, setCountries] = useState([])
+  const [message, setMessage] = useState([])
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    console.log('effect')
+    noteService
+      .getAll()
+      .then(response => {
+        console.log('effect promise fulfilled', response.data)
+        setCountries(response)
+    })
+  }, [])
+  console.log('countries updated ', countries.length)
+
+
+  const submitCountry = (event) => {
+    event.preventDefault()
+    console.log('the input is :', input)
+    const regex = new RegExp(input.toLowerCase(), 'i')
+    const filteredData = countries.filter(country => regex.test(country.name.common))
+    console.log('filtered data is: ', filteredData)
+    setMessage([])
+    if (input === '') {
+      console.log('empty input')
+      setError('Please enter a value')
+    } else if (filteredData.length >= 10) {
+      console.log(`country with '${input}' exists in database, but there are 10 or more matches`)
+      setError(`country with '${input}' in name exists in database, but there are 10 or more matches`)
+    } else if (filteredData.length === 0) {
+      console.log("no countries")
+      setError(`No countries exist with "${input}" in name`)
+    } else if (filteredData.length === 1) {
+      console.log("ONLY ONE COUNTRY")
+      setMessage(filteredData)
+      setError(null)
+    } else {
+      console.log(`country with '${input}' exists in database`, filteredData)
+      setMessage(filteredData)
+      setError(null)
+    }
+  }
+
+  const handleInputChange = (event) => {
+    console.log(event.target.value)
+    setInput(event.target.value)
+  }
+
+  const Results = (props) => {
+    const CountryData = (props) => {
+      return (
+        <div>
+            <h2 key={props.country.name.common}>
+              {props.country.name.common}
+            </h2>
+            <span>
+              capital {props.country.capital} <br />
+              area {props.country.area}
+            </span>
+            <h4>languages:</h4>
+            <ul>
+            {Object.values(props.country.languages).map(language => (
+              <li key={language}>
+                {language}
+              </li>
+            ))}
+            </ul>
+            <img src={props.country.flags.png} alt="Flag"/>
+          </div>
+      )
+    }
+
+    const [showData, setShowData] = useState(props.message.map(() => false))
+
+    const toggleShowData = (index) => {
+      const updatedVisibility = [...showData]
+      updatedVisibility[index] = !updatedVisibility[index]
+      setShowData(updatedVisibility)
+    }
+
+    return (
+      <div>
+        <Notification error={error} />
+        {message.length === 1 && message[0].name.official 
+          ? (
+          <CountryData country={message[0]} />
+        ) : (
+          message.map((country, index) => (
+            <span key={index}>
+              {country.name.common}
+              <button onClick={() => toggleShowData(index)}>{showData[index] ? 'Hide Data': 'Show Data'}</button>
+              <span>
+                {showData[index] ? <CountryData country={country} /> : null }
+              </span>
+              <br />
+            </span>
+          ))
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <form onSubmit={submitCountry}>
+        find countries <input value={input} onChange={handleInputChange}></input>
+      </form>
+      <Results message={message}/>
+    </div>
+  )
+}
+
+const App = () => {
+
+  return (
+    <div>
+      <Search />
+    </div>
+  )
+}
+
+export default App
