@@ -1,0 +1,104 @@
+import { useState, useEffect } from 'react'
+import noteService from './services/countries'
+
+const Search = (props) => {
+  const [input, setInput] = useState('Fi')
+  const [countries, setCountries] = useState([])
+  const [message, setMessage] = useState([])
+
+  useEffect(() => {
+    console.log('effect')
+    noteService
+      .getAll()
+      .then(response => {
+        console.log('effect promise fulfilled', response.data)
+        setCountries(response)
+    })
+  }, [])
+  console.log('countries updated ', countries.length)
+
+
+  const submitCountry = (event) => {
+    event.preventDefault()
+    console.log('the input is :', input)
+    const regex = new RegExp(input.toLowerCase(), 'i')
+    const filteredData = countries.filter(country => regex.test(country.name.common))
+    console.log('filtered data is: ', filteredData)
+    setMessage([])
+    if (input === '') {
+      console.log('empty input')
+      setMessage([{name: {common: 'Please enter a value'}}])
+    } else if (filteredData.length >= 10) {
+      console.log(`country with '${input}' exists in database but there are 10 or more matches`)
+      setMessage([{name: {common: 'Too many matches, specify another filter'}}])
+    } else if (filteredData.length === 0) {
+      console.log("no countries")
+      setMessage([{name: {common: `No countries exist with '${input}'`}}])
+    } else if (filteredData.length === 1) {
+      console.log("ONLY ONE COUNTRY")
+      setMessage(filteredData)
+    } else {
+      console.log(`country with '${input}' exists in database`, filteredData)
+      setMessage(filteredData)
+    }
+  }
+
+  const handleInputChange = (event) => {
+    console.log(event.target.value)
+    setInput(event.target.value)
+  }
+
+  const Results = () => {
+    return (
+      <div>
+        {message.length === 1 && message[0].name.official ? (
+          <div>
+            <h2 key={message[0].name.common}>
+              {message[0].name.common}
+            </h2>
+            <span>
+              capital {message[0].capital} <br />
+              area {message[0].area}
+            </span>
+            <h4>languages:</h4>
+            <ul>
+            {Object.values(message[0].languages).map(language => (
+              <li key={language}>
+                {language}
+              </li>
+            ))}
+            </ul>
+            <img src={message[0].flags.png} alt="Flag"/>
+          </div>
+        ) : (
+          message.map((country) => (
+            <span key={country.name.common}>
+              {country.name.common}<br />
+            </span>
+          ))
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <form onSubmit={submitCountry}>
+        find countries <input value={input} onChange={handleInputChange}></input>
+      </form>
+      <Results message={message}/>
+    </div>
+  )
+}
+
+const App = () => {
+
+  return (
+    <div>
+      <Search />
+      <p>Hello world</p>
+    </div>
+  )
+}
+
+export default App
