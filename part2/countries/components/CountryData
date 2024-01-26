@@ -1,0 +1,24 @@
+const CountryData = (props) => {
+    return (
+      <div>
+          <h2 key={props.country.name.common}>
+            {props.country.name.common}
+          </h2>
+          <span>
+            capital {props.country.capital} <br />
+            area {props.country.area}
+          </span>
+          <h4>languages:</h4>
+          <ul>
+          {Object.values(props.country.languages).map(language => (
+            <li key={language}>
+              {language}
+            </li>
+          ))}
+          </ul>
+          <img src={props.country.flags.png} alt="Flag"/>
+        </div>
+    )
+  }
+
+export default CountryData
