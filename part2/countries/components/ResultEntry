@@ -1,0 +1,12 @@
+import CountryData from './CountryData'
+
+const ResultEntry = ({ country, showData, onToggleShowData }) => (
+    <span>
+      {country.name.common}
+      <button onClick={onToggleShowData}>{showData ? 'Hide Data': 'Show Data'}</button>
+      {showData ? <CountryData country={country} /> : null }
+      <br />
+    </span>
+  )
+
+export default ResultEntry
