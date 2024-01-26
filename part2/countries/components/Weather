@@ -1,0 +1,36 @@
+import noteService from '../services/countries'
+import { useState, useEffect} from 'react'
+
+const Weather = (props) => {
+    const api_key = import.meta.env.VITE_SOME_KEY
+    const lat = props.country.capitalInfo.latlng[0]
+    const lon = props.country.capitalInfo.latlng[1]
+    const [weather, setWeather] = useState('')
+    
+  
+    useEffect(() => {
+      const weatherApi = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}`
+  
+      noteService
+        .getAll(weatherApi)
+        .then(response => {
+          console.log('THE WEATHER EFFECT PROMISE', response)
+          setWeather(response)
+      })
+    }, [])
+    
+    const temp = Math.round(((weather?.main?.temp - 273.15) * 100) / 100).toFixed(2)
+    const wind = weather?.wind?.speed
+    const icon = (weather.weather && weather.weather[0].icon)
+  
+    return (
+      <div>
+        <h2>Weather in {props.country.capital}</h2>
+        <p>temperature {temp} Celsius</p>
+        <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`}/>
+        <p>wind {wind} ms/</p>
+      </div>
+    )
+  }
+
+export default Weather
