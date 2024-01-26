@@ -1,0 +1,41 @@
+import { useState } from 'react'
+import Notification from './Notification'
+import CountryData from './CountryData'
+import Weather from './Weather'
+import ResultEntry from './ResultEntry'
+ 
+const Results = ({ message, error }) => {
+    const [showData, setShowData] = useState(message.map(() => false))
+  
+    const toggleShowData = (index) => {
+      setShowData(prevShowData => {
+        const updatedVisibility = [...prevShowData]
+        updatedVisibility[index] = !updatedVisibility[index]
+        return updatedVisibility
+      })
+    }
+  
+    return (
+      <div>
+        <Notification error={error} />
+        {message.length === 1 && message[0].name.official 
+          ? (
+          <div>  
+          <CountryData country={message[0]} />
+          <Weather country={message[0]}/>
+          </div>
+        ) : (
+          message.map((country, index) => (
+            <ResultEntry
+              key={index}
+              country={country}
+              showData={showData[index]}
+              onToggleShowData={() => toggleShowData(index)}
+            />
+          ))
+        )}
+      </div>
+    )
+  }
+
+export default Results
