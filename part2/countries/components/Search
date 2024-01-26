@@ -1,0 +1,60 @@
+import { useState, useEffect } from 'react'
+import noteService from '../services/countries'
+import Results from './Results'
+
+const Search = () => {
+    const [input, setInput] = useState('Finland')
+    const [countries, setCountries] = useState([])
+    const [message, setMessage] = useState([])
+    const [error, setError] = useState(null)
+  
+    useEffect(() => {
+      noteService
+        .getAll()
+        .then(response => {
+          console.log('effect promise fulfilled', response)
+          setCountries(response)
+      })
+    }, [])
+  
+    const submitCountry = (event) => {
+      event.preventDefault()
+      const regex = new RegExp(input.toLowerCase(), 'i')
+      const filteredData = countries.filter(country => regex.test(country.name.common))
+      setMessage([])
+      if (input === '') {
+        console.log('empty input')
+        setError('Please enter a value')
+      } else if (filteredData.length >= 10) {
+        console.log(`country with '${input}' exists in database, but there are 10 or more matches`)
+        setError(`country with '${input}' in name exists in database, but there are 10 or more matches`)
+      } else if (filteredData.length === 0) {
+        console.log("no countries")
+        setError(`No countries exist with "${input}" in name`)
+      } else if (filteredData.length === 1) {
+        console.log("ONLY ONE COUNTRY")
+        setMessage(filteredData)
+        setError(null)
+      } else {
+        console.log(`country with '${input}' exists in database`, filteredData)
+        setMessage(filteredData)
+        setError(null)
+      }
+    }
+  
+    const handleInputChange = (event) => {
+      console.log(event.target.value)
+      setInput(event.target.value)
+    }
+  
+    return (
+      <div>
+        <form onSubmit={submitCountry}>
+          find countries <input value={input} onChange={handleInputChange}></input>
+        </form>
+        <Results message={message} error={error}/>
+      </div>
+    )
+  }
+
+export default Search
