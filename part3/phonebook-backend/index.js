@@ -1,5 +1,7 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
+
 
 app.use(express.json())
 
@@ -66,12 +68,12 @@ const generateId = () => {
 const nameCheck = (name) => {
   return persons.some(person => person.name === name)
 }
-
+app.use(morgan(':method :url :body'))
 app.post('/api/persons', (request, response) => {
   const person = request.body
   person.id = generateId()
-  console.log(person.name)
   
+  morgan.token('body', request => JSON.stringify(request.body))
   if (!person.name) {
     return response.status(400).json({
       error: "name missing"
@@ -92,6 +94,7 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
   response.json(person)
 })
+
 
 const PORT = 3001
 app.listen(PORT, () => {
