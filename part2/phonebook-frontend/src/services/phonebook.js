@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = "http://localhost:3001/phonebook"
+const baseUrl = "http://localhost:3001/api/persons"
 
 const getAll = () => {
     const request = axios.get(baseUrl)
@@ -13,12 +13,12 @@ const create = (nameObject) => {
 }
 
 const deleteRecord = (id) => {
-    const request = axios.delete(`http://localhost:3001/phonebook/${id}`)
+    const request = axios.delete(`http://localhost:3001/api/persons/${id}`)
     return request.then(response => response.data)
 }
 
 const update = (id, nameObject) => {
-    const request = axios.put(`http://localhost:3001/phonebook/${id}`, nameObject)
+    const request = axios.put(`http://localhost:3001/api/persons/${id}`, nameObject)
     return request.then(response => response.data)
 }
 

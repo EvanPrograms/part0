@@ -23,6 +23,16 @@ const AddNew = (props) => {
       }
       if (props.names.some(person => person.name === nameObject.name) === false) {
         props.setpersons(props.names.concat(nameObject))
+        props.setAddMessage({
+          message: `Added ${nameObject.name}`,
+          alert: true
+        })
+        setTimeout(() => {
+          props.setAddMessage({
+            message: null,
+            alert: false
+          })
+        }, 5000)
         noteService
           .create(nameObject)
           .then(response => {response.data; props.setRequestData(new Date())})
@@ -35,7 +45,33 @@ const AddNew = (props) => {
         if (confirmation) {
           noteService
           .update(identity.id, nameObject)
-          .then(response => {response.data; props.setRequestData(new Date())})
+          .catch(error => {
+            props.setAddMessage({
+              message: `Information of ${nameObject.name} has already been removed from the server`,
+              alert: false
+            })
+            setTimeout(() => {
+              props.setAddMessage({
+                message: null,
+                alert: false
+              })
+            }, 5000)
+          })  
+          .then(response => {response.data; 
+            props.setRequestData(new Date());
+            props.setAddMessage({
+              message: `Updated ${nameObject.name}'s number`,
+              alert: true
+            })
+            setTimeout(() => {
+              props.setAddMessage({
+                message: null,
+                alert: false
+              })
+            }, 5000)
+            
+
+          })
         }
       }
       setNewName('')
