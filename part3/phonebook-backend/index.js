@@ -77,32 +77,50 @@ const nameCheck = (name) => {
 }
 app.use(morgan(':method :url :body'))
 app.post('/api/persons', (request, response) => {
-  const person = request.body
-  person.id = generateId()
-  
-// note  
+  const body = request.body
+
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'content missing'})
+  }
 
   morgan.token('body', request => JSON.stringify(request.body))
-  if (!person.name) {
-    return response.status(400).json({
-      error: "name missing"
-    })
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
 
-  if (!person.number) {
-    return response.status(400).json({
-      error: "number mising"
-    })
-  }
-
-  if (nameCheck(person.name)) {
-    return response.status(400).json({
-      error: "Name must be unique"
-    })
-  }
-  persons = persons.concat(person)
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+    console.log('adfaf')
+  })
 })
+// app.post('/api/persons', (request, response) => {
+//   const person = request.body
+//   person.id = generateId()
+  
+// // note  
+
+//   morgan.token('body', request => JSON.stringify(request.body))
+//   if (!person.name) {
+//     return response.status(400).json({
+//       error: "name missing"
+//     })
+//   }
+
+//   if (!person.number) {
+//     return response.status(400).json({
+//       error: "number mising"
+//     })
+//   }
+
+//   if (nameCheck(person.name)) {
+//     return response.status(400).json({
+//       error: "Name must be unique"
+//     })
+//   }
+//   persons = persons.concat(person)
+//   response.json(person)
+// })
 
 
 const PORT = process.env.PORT || 3001
