@@ -5,9 +5,21 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
 app.use(express.json())
 app.use(cors())
+app.use(requestLogger)
 app.use(express.static('dist'))
 
 let persons = [
@@ -61,11 +73,22 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+// app.delete('/api/persons/:id', (request, response) => {
+//   const id = Number(request.params.id)
+//   persons = persons.filter(person => person.id !== id)
 
-  response.status(204).end(`Entry ${id} has been deleted`)
+//   response.status(204).end(`Entry ${id} has been deleted`)
+// })
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(500).end()
+    } )
 })
 
 const generateId = () => {
@@ -122,6 +145,7 @@ app.post('/api/persons', (request, response) => {
 //   response.json(person)
 // })
 
+app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
