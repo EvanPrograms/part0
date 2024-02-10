@@ -17,32 +17,31 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
 app.use(requestLogger)
+morgan.token('body', request => JSON.stringify(request.body))
+app.use(morgan(':method :url :body'))
 
-
-
-
-let persons = [
-    { 
-      "id": 1,
-      "name": "person", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "person2", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "person3", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "person4", 
-      "number": "39-23-6423122"
-    }
-]
+// let persons = [
+//     { 
+//       "id": 1,
+//       "name": "person", 
+//       "number": "040-123456"
+//     },
+//     { 
+//       "id": 2,
+//       "name": "person2", 
+//       "number": "39-44-5323523"
+//     },
+//     { 
+//       "id": 3,
+//       "name": "person3", 
+//       "number": "12-43-234345"
+//     },
+//     { 
+//       "id": 4,
+//       "name": "person4", 
+//       "number": "39-23-6423122"
+//     }
+// ]
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -94,7 +93,7 @@ const generateId = () => {
 const nameCheck = (name) => {
   return persons.some(person => person.name === name)
 }
-app.use(morgan(':method :url :body'))
+
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
@@ -102,7 +101,6 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'content missing'})
   }
 
-  morgan.token('body', request => JSON.stringify(request.body))
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -111,6 +109,8 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
     console.log('adfaf')
+  
+  
   })
 })
 // app.post('/api/persons', (request, response) => {
@@ -140,6 +140,21 @@ app.post('/api/persons', (request, response) => {
 //   persons = persons.concat(person)
 //   response.json(person)
 // })
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true})
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
