@@ -43,9 +43,9 @@ app.use(morgan(':method :url :body'))
 //     }
 // ]
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
+// app.get('/', (request, response) => {
+//   response.send('<h1>Hello World!</h1>')
+// })
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
@@ -55,20 +55,34 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
   date = new Date()
-  response.send(
-    `<p>Phonebook has info for ${persons.length} people</p>
-    ${date}`
-  )
+  Person.find({})
+    .then(persons => {
+      response.send(
+        `<p>Phonebook has info for ${persons.length} people</p>
+        ${date}`
+      )
+    })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    return response.json(person)
-  } else {
-    return response.status(404).end("This entry does not exist!")
-  }
+app.get('/api/persons/:id', (request, response, next) => {
+  console.log('Request.params.id is: ', typeof request.params.id)
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end('Entry does not exist')
+      }
+    })
+    .catch(error => next(error))
+
+  // const id = Number(request.params.id)
+  // const person = persons.find(person => person.id === id)
+  // if (person) {
+  //   return response.json(person)
+  // } else {
+  //   return response.status(404).end("This entry does not exist!")
+  // }
 })
 
 // app.delete('/api/persons/:id', (request, response) => {
@@ -96,8 +110,9 @@ const nameCheck = (name) => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-
-  if (body.name === undefined) {
+  console.log(typeof body.name)
+  if (!body.name) {
+    console.log('BODY.NAME WAS EMPTY!')
     return response.status(400).json({ error: 'content missing'})
   }
 
@@ -109,8 +124,6 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
     console.log('adfaf')
-  
-  
   })
 })
 // app.post('/api/persons', (request, response) => {
