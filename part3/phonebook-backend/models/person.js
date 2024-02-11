@@ -5,12 +5,12 @@ mongoose.set('strictQuery',false)
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
-    .then(result => {
-        console.log('Connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('Error connecting to MongoDB:', error.message)
-    })
+  .then(() => {
+    console.log('Connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('Error connecting to MongoDB:', error.message)
+  })
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -26,7 +26,7 @@ const personSchema = new mongoose.Schema({
         const regex = /^\d{2,3}-\d{6,}$/
         return regex.test(phone)
       },
-      message: "Incorrect phone number format. Please enter X-X"
+      message: 'Incorrect phone number format. Please enter X-X'
     }
   }
 })
