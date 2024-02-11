@@ -1,11 +1,11 @@
-import noteService from '../services/phonebook'
+import phoneService from '../services/phonebook'
 
 const DeleteButton = (props) => {
   const askForConfirmation = () => {
     const result = window.confirm(`Do you want to delete ${props.name}`)
     if (result) {
       console.log("CONFIRM DELETE")
-      noteService
+      phoneService
         .deleteRecord(props.id)
         .then(() => {
           props.setRequestData(new Date())

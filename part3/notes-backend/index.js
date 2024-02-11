@@ -47,10 +47,6 @@ app.get('/api/notes', (request, response) => {
     })
   })
   
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-  
 
 // app.get('/api/notes/:id', (request, response) => {
 //   const id = Number(request.params.id)
@@ -118,6 +114,10 @@ app.post('/api/notes', (request, response, next) => {
     })
     .catch(error => next(error))
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
 app.use(unknownEndpoint)
 

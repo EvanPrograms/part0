@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Entries from './components/Entries'
 import SearchNames from './components/SearchNames'
 import AddNew from './components/AddNew'
-import noteService from './services/phonebook'
+import phoneService from './services/phonebook'
 import Notification from './components/Notifications'
 import './index.css'
 
@@ -15,7 +15,7 @@ const App = () => {
   })
   
   useEffect(() => {
-    noteService
+    phoneService
       .getAll()
       .then(response => {
         setPersons(response)
