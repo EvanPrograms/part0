@@ -32,7 +32,7 @@ const mostBlogs = (blogs) => {
   }
 
   let maxBlog = array.reduce((max, author) => max.blogs > author.blogs ? max : 
-  author)
+  author, 'Empty list')
   return maxBlog
   }
 
@@ -51,7 +51,7 @@ const mostLikes = (blogs) => {
     array.push({ author: x, likes: count[x]})
   }
 
-  let maxLikes = array.reduce((max, author) => max.likes > author.likes ? max : author)
+  let maxLikes = array.reduce((max, author) => max.likes > author.likes ? max : author, 'Empty List')
   return maxLikes
 }
 

@@ -65,6 +65,11 @@ const blogs = [
 ]
 
 describe('total likes', () => {
+  test('when list is empty', () => {
+    const result = listHelper.totalLikes([])
+    assert.strictEqual((result), 0)
+  })
+
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
     assert.strictEqual((result), 5)
@@ -77,6 +82,16 @@ describe('total likes', () => {
 })
 
 describe('favorite blog', () => {
+test('when list is empty', () => {
+  const result = listHelper.favoriteBlog([])
+  assert.strictEqual((result), undefined)
+})
+
+test('when list has only one blog', () => {
+  const result = listHelper.favoriteBlog(listWithOneBlog)
+  assert.strictEqual((result), listWithOneBlog[0])
+})
+
   test('Finding the most liked blog', () => {
     const result = listHelper.favoriteBlog(blogs)
     assert.strictEqual((result), blogs[2])
@@ -84,12 +99,32 @@ describe('favorite blog', () => {
 })
 
 describe('Returns author with most blogs', () => {
+  test('When list is empty', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepEqual((result), 'Empty list')
+  })
+
+  test('when list has one entry', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    assert.deepEqual((result), { author: listWithOneBlog[0].author, blogs: listWithOneBlog.length})
+  })
+
   test('Returning blog with most votes')
-  const result = listHelper.mostBlogs(blogs)
-  assert.deepEqual((result), { author: 'Robert C. Martin', blogs: 3 })
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepEqual((result), { author: 'Robert C. Martin', blogs: 3 })
 })
 
-describe('Total number of likes that an author has received', () => {
+describe('Return author with most likes and their total likes', () => {
+test('when list is empty', () => {
+  const result = listHelper.mostLikes([])
+  assert.deepEqual((result), 'Empty List')
+})
+
+test('When list has only one entry', () => {
+  const result = listHelper.mostLikes(listWithOneBlog)
+  assert.deepEqual((result), { author: listWithOneBlog[0].author, likes: listWithOneBlog[0].likes})
+})
+
   test('Returning author with total likes')
   const result = listHelper.mostLikes(blogs)
   assert.deepEqual((result), { author: "Edsger W. Dijkstra", likes: 17 })
