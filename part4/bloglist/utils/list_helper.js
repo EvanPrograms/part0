@@ -16,8 +16,31 @@ const favoriteBlog = (blogs) => {
   return blogs[index]
 }
 
+const mostBlogs = (blogs) => {
+  const array = []
+  const count = {}
+  blogs.forEach(blog => {
+    if (count[blog.author]) {
+      count[blog.author] += 1
+    } else {
+      count[blog.author] = 1
+    }
+  })
+
+  for (let x in count) {
+    array.push({ author: x, blogs: count[x]})
+  }
+
+  let maxBlog = array.reduce((max, author) => max.blogs > author.blogs ? max : 
+  author)
+  console.log(maxBlog)
+  return maxBlog
+  }
+
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
