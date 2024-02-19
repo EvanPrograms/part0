@@ -1,6 +1,11 @@
-const { test, describe} = require('node:test')
+const { test, describe, after} = require('node:test')
 const assert = require('node:assert')
+const mongoose = require('mongoose')
+const supertest = require('supertest')
 const listHelper = require('../utils/list_helper')
+const app = require('../app')
+
+const api = supertest(app)
 
 const listWithOneBlog = [
   {
@@ -129,3 +134,18 @@ test('When list has only one entry', () => {
   const result = listHelper.mostLikes(blogs)
   assert.deepEqual((result), { author: "Edsger W. Dijkstra", likes: 17 })
 })
+
+describe(
+  'Verify blog list application returns the correct amount of blog posts in JSON', 
+  () => {
+    test('Response length from non-empty database', async () => {
+      const response = await api.get('/api/blogs')
+      assert.strictEqual(response.body.length, 3)
+    })
+  }
+)
+
+after(async () => {
+  await mongoose.connection.close()
+})
+
