@@ -6,37 +6,14 @@ const listHelper = require('../utils/list_helper')
 const app = require('../app')
 const blog = require('../models/blog')
 
-const initialBlogs = [
-  {
-    title: "Harry Potter",
-    author: "J.K. Rowling",
-    url: "www.harrypotter.com",
-    likes: 5,
-    id: "65c9d9eff6305c4ebbbdd2b2"
-  },
-  {
-    title: "The Matrix",
-    author: "Cohen Brothers",
-    url: "www.matrix.com",
-    likes: 55,
-    id: "65cb340051d04acc96838cdd"
-  },
-  {
-    title: "Acid Test",
-    author: "Tom Wolfe",
-    url: "www.wolfoftom.com",
-    likes: 3,
-    id: "65cbfabe62b10598a0443edc"
-  }
-]
 
 beforeEach(async () => {
   await blog.deleteMany({})
-  let blogObject = new blog(initialBlogs[0])
+  let blogObject = new blog(listHelper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new blog(initialBlogs[1])
+  blogObject = new blog(listHelper.initialBlogs[1])
   await blogObject.save()
-  blogObject = new blog(initialBlogs[2])
+  blogObject = new blog(listHelper.initialBlogs[2])
   await blogObject.save()
 })
 
@@ -175,7 +152,7 @@ describe(
   () => {
     test('Response length from non-empty database', async () => {
       const response = await api.get('/api/blogs')
-      assert.strictEqual(response.body.length, initialBlogs.length)
+      assert.strictEqual(response.body.length, listHelper.initialBlogs.length)
     })
 
     test('Verifies unique ID property of blog posts is named id', async () => {
@@ -198,6 +175,12 @@ describe(
         .send(newBlog)
         .expect(201)
         .expect('Content-type', /application\/json/)
+    
+      const blogsAtEnd = await listHelper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length + 1)
+
+      const contents = blogsAtEnd.map(b => b.author)
+      assert(contents.includes('SUPERTEST'))
     })
   }
 )
