@@ -1,9 +1,44 @@
-const { test, describe, after} = require('node:test')
+const { test, describe, after, beforeEach} = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const listHelper = require('../utils/list_helper')
 const app = require('../app')
+const blog = require('../models/blog')
+
+const initialBlogs = [
+  {
+    title: "Harry Potter",
+    author: "J.K. Rowling",
+    url: "www.harrypotter.com",
+    likes: 5,
+    id: "65c9d9eff6305c4ebbbdd2b2"
+  },
+  {
+    title: "The Matrix",
+    author: "Cohen Brothers",
+    url: "www.matrix.com",
+    likes: 55,
+    id: "65cb340051d04acc96838cdd"
+  },
+  {
+    title: "Acid Test",
+    author: "Tom Wolfe",
+    url: "www.wolfoftom.com",
+    likes: 3,
+    id: "65cbfabe62b10598a0443edc"
+  }
+]
+
+beforeEach(async () => {
+  await blog.deleteMany({})
+  let blogObject = new blog(initialBlogs[0])
+  await blogObject.save()
+  blogObject = new blog(initialBlogs[1])
+  await blogObject.save()
+  blogObject = new blog(initialBlogs[2])
+  await blogObject.save()
+})
 
 const api = supertest(app)
 
@@ -136,12 +171,36 @@ test('When list has only one entry', () => {
 })
 
 describe(
-  'Verify blog list application returns the correct amount of blog posts in JSON', 
+  'Verify blog list application returns correct JSON from requests', 
   () => {
     test('Response length from non-empty database', async () => {
       const response = await api.get('/api/blogs')
-      assert.strictEqual(response.body.length, 3)
+      assert.strictEqual(response.body.length, initialBlogs.length)
     })
+
+    test('Verifies unique ID property of blog posts is named id', async () => {
+      const response = await api.get('/api/blogs')
+      for (const x in response.body) {
+        assert(response.body[x].id, true)
+      }
+    })
+
+    // test('Verify making an HTTP request creates new blog post', async () => {
+    //   const newBlog = {
+    //     title: "HTTP Test Request",
+    //     author: "SUPERTEST",
+    //     url: "www.verifyNewBlog.com",
+    //     likes: 101,
+    //   }
+
+    //   await api
+    //     .post('/api/blogs')
+    //     .send(newBlog)
+    //     .expect(201)
+    //     .expect('Content-type', /application\/json/)
+
+    //   // const response = await api.post('/api/blogs')
+    // })
   }
 )
 
