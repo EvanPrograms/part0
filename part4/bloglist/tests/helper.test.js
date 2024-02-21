@@ -182,6 +182,25 @@ describe(
       const contents = blogsAtEnd.map(b => b.author)
       assert(contents.includes('SUPERTEST'))
     })
+
+    test('If likes is missing, default to 0', async () => {
+      const newBlog = {
+        title: "Missing Likes Request",
+        author: "Likes should be zero",
+        url: "www.no likes submitted.com"
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-type', /application\/json/)
+    
+      const blogsAtEnd = await listHelper.blogsInDb()
+
+      const testBlog = blogsAtEnd.filter(b => b.title === "Missing Likes Request")
+      assert(testBlog[0].likes === 0)
+    })
   }
 )
 
