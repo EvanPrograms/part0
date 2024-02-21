@@ -185,22 +185,20 @@ describe(
       }
     })
 
-    // test('Verify making an HTTP request creates new blog post', async () => {
-    //   const newBlog = {
-    //     title: "HTTP Test Request",
-    //     author: "SUPERTEST",
-    //     url: "www.verifyNewBlog.com",
-    //     likes: 101,
-    //   }
+    test('Verify making an HTTP request creates new blog post', async () => {
+      const newBlog = {
+        title: "HTTP Test Request",
+        author: "SUPERTEST",
+        url: "www.verifyNewBlog.com",
+        likes: 101,
+      }
 
-    //   await api
-    //     .post('/api/blogs')
-    //     .send(newBlog)
-    //     .expect(201)
-    //     .expect('Content-type', /application\/json/)
-
-    //   // const response = await api.post('/api/blogs')
-    // })
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-type', /application\/json/)
+    })
   }
 )
 
