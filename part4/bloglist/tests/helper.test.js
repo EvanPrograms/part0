@@ -217,6 +217,19 @@ describe(
 
       assert.strictEqual(response.length, listHelper.initialBlogs.length)
     })
+
+    test('Verify that deleting a blog works', async () => {
+      const responseStart = await listHelper.blogsInDb()
+      const id = responseStart[0].id
+
+      await api
+        .delete(`/api/blogs/${id}`)
+        .expect(204)
+
+      const responseEnd = await listHelper.blogsInDb()
+      assert.strictEqual(responseEnd.length, listHelper.initialBlogs.length - 1)
+    })
+
   }
 )
 
