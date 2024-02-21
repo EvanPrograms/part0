@@ -201,6 +201,22 @@ describe(
       const testBlog = blogsAtEnd.filter(b => b.title === "Missing Likes Request")
       assert(testBlog[0].likes === 0)
     })
+
+    test('Verify POST request with missing title or url is 400 bad request ', async () => {
+      const newBlog = {
+        author: "MISSING TITLE AND URL"
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+        .expect('Content-type', /application\/json/)
+
+      const response = await listHelper.blogsInDb()
+
+      assert.strictEqual(response.length, listHelper.initialBlogs.length)
+    })
   }
 )
 
