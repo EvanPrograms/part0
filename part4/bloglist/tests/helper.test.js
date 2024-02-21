@@ -230,6 +230,22 @@ describe(
       assert.strictEqual(responseEnd.length, listHelper.initialBlogs.length - 1)
     })
 
+    test('PUT request to update an entry', async () => {
+      const responseStart = await listHelper.blogsInDb()
+      const id = responseStart[0].id
+      const updateLikes = 15
+      const testBlog = {
+        likes: updateLikes
+        }
+      
+      await api
+        .put(`/api/blogs/${id}`)
+        .send(testBlog)
+        .expect(201)
+
+      const responseEnd = await listHelper.blogsInDb()
+      assert.strictEqual(responseEnd[0].likes, updateLikes)
+    })
   }
 )
 
