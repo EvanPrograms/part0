@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const listHelper = require('../utils/list_helper')
 const app = require('../app')
 const blog = require('../models/blog')
+const user = require('../models/user')
 
 
 beforeEach(async () => {
@@ -15,71 +16,13 @@ beforeEach(async () => {
   await blogObject.save()
   blogObject = new blog(listHelper.initialBlogs[2])
   await blogObject.save()
+
+  await user.deleteMany({})
+  let userObject = new user(listHelper.singleUser[0])
+  await userObject.save()
 })
 
 const api = supertest(app)
-
-const listWithOneBlog = [
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-    likes: 5,
-    __v: 0
-  }
-]
-
-const blogs = [
-  {
-    _id: "5a422a851b54a676234d17f7",
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: "5a422aa71b54a676234d17f8",
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: "5a422b3a1b54a676234d17f9",
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 12,
-    __v: 0
-  },
-  {
-    _id: "5a422b891b54a676234d17fa",
-    title: "First class tests",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
-    likes: 10,
-    __v: 0
-  },
-  {
-    _id: "5a422ba71b54a676234d17fb",
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-    likes: 0,
-    __v: 0
-  },
-  {
-    _id: "5a422bc61b54a676234d17fc",
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-    __v: 0
-  }  
-]
 
 describe('total likes', () => {
   test('when list is empty', () => {
@@ -88,12 +31,12 @@ describe('total likes', () => {
   })
 
   test('when list has only one blog, equals the likes of that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
+    const result = listHelper.totalLikes(listHelper.listWithOneBlog)
     assert.strictEqual((result), 5)
   })
 
   test('Testing all the blogs', () => {
-    const result = listHelper.totalLikes(blogs)
+    const result = listHelper.totalLikes(listHelper.blogs)
     assert.strictEqual((result), 36)
   })
 })
@@ -105,13 +48,13 @@ test('when list is empty', () => {
 })
 
 test('when list has only one blog', () => {
-  const result = listHelper.favoriteBlog(listWithOneBlog)
-  assert.strictEqual((result), listWithOneBlog[0])
+  const result = listHelper.favoriteBlog(listHelper.listWithOneBlog)
+  assert.strictEqual((result), listHelper.listWithOneBlog[0])
 })
 
   test('Finding the most liked blog', () => {
-    const result = listHelper.favoriteBlog(blogs)
-    assert.strictEqual((result), blogs[2])
+    const result = listHelper.favoriteBlog(listHelper.blogs)
+    assert.strictEqual((result), listHelper.blogs[2])
   })
 })
 
@@ -122,12 +65,12 @@ describe('Returns author with most blogs', () => {
   })
 
   test('when list has one entry', () => {
-    const result = listHelper.mostBlogs(listWithOneBlog)
-    assert.deepEqual((result), { author: listWithOneBlog[0].author, blogs: listWithOneBlog.length})
+    const result = listHelper.mostBlogs(listHelper.listWithOneBlog)
+    assert.deepEqual((result), { author: listHelper.listWithOneBlog[0].author, blogs: listHelper.listWithOneBlog.length})
   })
 
   test('Returning blog with most votes')
-    const result = listHelper.mostBlogs(blogs)
+    const result = listHelper.mostBlogs(listHelper.blogs)
     assert.deepEqual((result), { author: 'Robert C. Martin', blogs: 3 })
 })
 
@@ -138,12 +81,12 @@ test('when list is empty', () => {
 })
 
 test('When list has only one entry', () => {
-  const result = listHelper.mostLikes(listWithOneBlog)
-  assert.deepEqual((result), { author: listWithOneBlog[0].author, likes: listWithOneBlog[0].likes})
+  const result = listHelper.mostLikes(listHelper.listWithOneBlog)
+  assert.deepEqual((result), { author: listHelper.listWithOneBlog[0].author, likes: listHelper.listWithOneBlog[0].likes})
 })
 
   test('Returning author with total likes')
-  const result = listHelper.mostLikes(blogs)
+  const result = listHelper.mostLikes(listHelper.blogs)
   assert.deepEqual((result), { author: "Edsger W. Dijkstra", likes: 17 })
 })
 
@@ -248,6 +191,103 @@ describe(
     })
   }
 )
+
+describe('Tests for adding correctly formatted users', () => {
+  test('Username has less than 3 characters', async () => {
+    const newUser = {
+      username: "aa",
+      password: "password"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-type', /application\/json/)
+
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length) 
+  })
+
+  test('Password has less than 3 characters', async () => {
+    const newUser = {
+      username: "good name",
+      password: "1"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(403)
+      .expect('Content-type', /application\/json/)
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length)
+  })
+
+  test('username not provided', async () => {
+    const newUser = {
+      password: "good password"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-type', /application\/json/)
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length)
+  })
+
+  test('Password not provided', async () => {
+    const newUser = {
+      username: "good name"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(403)
+      .expect('Content-type', /application\/json/)
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length)
+  })
+
+  test('Username is not unique', async () => {
+    const newUser = {
+      username: listHelper.singleUser.username,
+      password: "password"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-type', /application\/json/)
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length)
+  })
+
+  test('Successful add operation', async () => {
+    const newUser = {
+      username: "Good name",
+      password: "Good password"
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-type', /application\/json/)
+
+    const response = await listHelper.usersInDb()
+    assert.strictEqual(response.length, listHelper.singleUser.length + 1)
+  })
+})
 
 after(async () => {
   await mongoose.connection.close()
