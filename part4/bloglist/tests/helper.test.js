@@ -147,7 +147,7 @@ describe(
 
     test('Verify POST request with missing title or url is 400 bad request ', async () => {
       const newBlog = {
-        author: "MISSING TITLE AND URL"
+        author: "Missing title and URL!"
       }
 
       await api
