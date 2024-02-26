@@ -11,14 +11,10 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   const body = request.body
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
+  console.log('hey this is the user', user)
 
   const blog = new Blog({
     title: body.title,
@@ -35,11 +31,8 @@ blogsRouter.post('/', async (request, response, next) => {
   
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
+  const user = request.user
 
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).json('Deleted the entry!')
