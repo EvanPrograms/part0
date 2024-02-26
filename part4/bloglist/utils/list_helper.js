@@ -170,6 +170,11 @@ const postTest = (user, code) => {
       .expect('Content-type', /application\/json/)
 }
 
+const initialUser = {
+  username: "initial user username",
+  password: "initial user password"
+}
+
 
 module.exports = {
   dummy,
@@ -183,5 +188,6 @@ module.exports = {
   blogs,
   singleUser,
   usersInDb,
-  postTest
+  postTest,
+  initialUser
 }

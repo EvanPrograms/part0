@@ -6,7 +6,7 @@ const listHelper = require('../utils/list_helper')
 const app = require('../app')
 const blog = require('../models/blog')
 const user = require('../models/user')
-
+const api = supertest(app)
 
 beforeEach(async () => {
   await blog.deleteMany({})
@@ -18,11 +18,12 @@ beforeEach(async () => {
   await blogObject.save()
 
   await user.deleteMany({})
-  let userObject = new user(listHelper.singleUser[0])
-  await userObject.save()
+  await api.post('/api/users').send(listHelper.singleUser[0])
+  // let userObject = new user(listHelper.singleUser[0])
+  // await userObject.save()
 })
 
-const api = supertest(app)
+
 
 describe('total likes', () => {
   test('when list is empty', () => {
@@ -113,8 +114,14 @@ describe(
         likes: 101,
       }
 
+      const response = await api
+        .post('/api/login')
+        .send({ username: listHelper.singleUser[0].username, password: listHelper.singleUser[0].password })
+      const token = response.body.token
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-type', /application\/json/)
@@ -133,8 +140,14 @@ describe(
         url: "www.no likes submitted.com"
       }
 
+      const response = await api
+        .post('/api/login')
+        .send({ username: listHelper.singleUser[0].username, password: listHelper.singleUser[0].password })
+      const token = response.body.token
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-type', /application\/json/)
@@ -165,8 +178,14 @@ describe(
       const responseStart = await listHelper.blogsInDb()
       const id = responseStart[0].id
 
+      const response = await api
+        .post('/api/login')
+        .send({ username: listHelper.singleUser[0].username, password: listHelper.singleUser[0].password })
+      const token = response.body.token
+
       await api
         .delete(`/api/blogs/${id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const responseEnd = await listHelper.blogsInDb()
