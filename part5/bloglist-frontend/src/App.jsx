@@ -3,15 +3,30 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ message, alert }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='notification' style={{ color:alert ? 'red' : 'green'}}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [errorMessage, setErrorMessage] = useState({
+    message: null,
+    alert: false
+  })
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -31,9 +46,15 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setErrorMessage({
+        message: `Wrong username or password`,
+        alert: true
+      })
       setTimeout(() => {
-        setErrorMessage(null)
+        setErrorMessage({
+          message: null,
+          alert: false
+        })
       }, 5000)
     }
   }
@@ -54,6 +75,16 @@ const App = () => {
         setUrl('')
         setTitle('')
         blogService.getAll().then(blogs => setBlogs(blogs))
+        setErrorMessage({
+          message: `a new blog ${title} by ${author} added`,
+          alert: false
+        })
+        setTimeout(() => {
+        setErrorMessage({
+          message: null,
+          alert: false
+        })
+        }, 5000)
       })
   }
 
@@ -161,8 +192,10 @@ const App = () => {
     window.localStorage.clear()
   }
 
+
   return (
     <div>
+      <Notification message={errorMessage.message} alert={errorMessage.alert}/>
       {user === null ? loginForm() : blogList()}
     </div>
   )
