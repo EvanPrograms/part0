@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from 'react'
+import { useState, forwardRef, useImperativeHandle, Fragment } from 'react'
 
 const Togglable = forwardRef((props, refs) => {
   const [visible, setVisible] = useState(false)
@@ -17,15 +17,24 @@ const Togglable = forwardRef((props, refs) => {
   })
 
   return (
-    <div>
-      <div style={hideWhenVisible}>
+    <span>
+      <span style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
-      </div>
-      <div style={showWhenVisible}>
-        {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
-      </div>
-    </div>
+      </span>
+      <span style={showWhenVisible}>
+      {props.buttonTop === "true" ? (
+        <span>
+          <button onClick={toggleVisibility}>{props.hideButton}</button>
+          {props.children}
+        </span>
+      ) : (
+        <span>
+          {props.children}
+          <button onClick={toggleVisibility}>{props.hideButton}</button>
+        </span>
+      )}
+      </span>
+    </span>
   )
 })
 
