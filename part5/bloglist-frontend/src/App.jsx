@@ -120,6 +120,10 @@ const App = () => {
   )
   
   const blogList = () => {
+    const compareLikes = (b, a) => {
+      return a.likes - b.likes;
+    }
+
     return (
     <div>
     <h2>blogs</h2>
@@ -129,6 +133,7 @@ const App = () => {
     {blogForm()}
     {blogs
       .filter(blog => blog.user.username === user.username)
+      .sort(compareLikes)
       .map(blog =>
       <Blog key={blog.id} blog={blog} />
     )}
