@@ -1,6 +1,10 @@
 import Togglable from '../components/Togglable'
+import blogService from '../services/blogs'
+import { useState, useEffect } from 'react'
 
 const Blog = ({ blog }) => {
+  const [likes, setLikes] = useState(blog.likes)
+
   const blogStyle = { 
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,17 +13,51 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
+  const LikeButton = () => {
+    const addLike = async () => {
+      const blogLikesPlus = likes + 1 
+      setLikes(blogLikesPlus)
+      console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
+      const addedLikeObject = {
+        user: blog.user.id,
+        likes: blogLikesPlus,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+      await blogService
+        .update(blog.id, addedLikeObject)
+    }
+    return (
+      <span>
+        <button onClick={addLike}>like</button>
+      </span>
+    )
+  }
+  
+  const BlogDetails = () => (
+    <div>
+      <div>{blog.url}</div>
+      <div>likes {likes} <LikeButton /></div>
+      <div>{blog.user.name}</div>
+    </div>
+  );
+
   const BlogReveal = () => (
     <Togglable buttonLabel="View" hideButton="hide" buttonTop="true" >
-      <div>{blog.url}</div>
-      <div>likes {blog.likes} <button type="submit">like</button> </div>
-      <div>{blog.user.name}</div>   
+      {/* <div>{blog.url}</div>
+      <div>likes {likes} <LikeButton /> </div>
+      <div>{blog.user.name} {likes}</div>    */}
+        <BlogDetails />
     </Togglable>
   )
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author} <BlogReveal />
+      {blog.title} {blog.author}
+      <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
+        <BlogDetails />
+      </Togglable>
     </div>  
 )}
 
