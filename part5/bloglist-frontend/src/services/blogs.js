@@ -34,4 +34,18 @@ const update = async (id, newObject) => {
   }
 }
 
-export default { getAll, create, setToken, update }
+const deleteRecord = async (id) => {
+  const config = {
+    headers: { Authorization: token }
+  }
+
+  try { 
+    const response = await axios.delete(`${baseUrl}/${id}`, config)
+    return response.data
+  } catch (error) {
+    console.log('DELETE error, ', error)
+  }
+
+}
+
+export default { getAll, create, setToken, update, deleteRecord }

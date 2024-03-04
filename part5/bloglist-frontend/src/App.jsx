@@ -70,6 +70,15 @@ const App = () => {
       })
   }
 
+  const deleteBlog = (blogObject) => {
+    blogService
+      .deleteRecord(blogObject)
+      .then(returnedBlog => {
+        const blogsAfterDelete = blogs.filter(blog => blog.id !== blogObject)
+        setBlogs(blogsAfterDelete)
+      })
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -135,7 +144,7 @@ const App = () => {
       .filter(blog => blog.user.username === user.username)
       .sort(compareLikes)
       .map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      <Blog key={blog.id} blog={blog} deleteTheBlog={deleteBlog}/>
     )}
     </div>
     )

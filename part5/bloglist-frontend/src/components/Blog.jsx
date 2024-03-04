@@ -2,8 +2,10 @@ import Togglable from '../components/Togglable'
 import blogService from '../services/blogs'
 import { useState, useEffect } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, deleteTheBlog }) => {
   const [likes, setLikes] = useState(blog.likes)
+
+  
 
   const blogStyle = { 
     paddingTop: 10,
@@ -34,12 +36,35 @@ const Blog = ({ blog }) => {
       </span>
     )
   }
+
+  const DeleteButton = () => {
+
+    const deleteBlog = (event) => {
+      event.preventDefault()
+      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
+        console.log('delete blog!', blog.id)
+        deleteTheBlog(blog.id)
+    }
+
+    // const deleteBlog = (event) => {
+    //   event.preventDefault()
+    //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
+    //     console.log('delete blog!', blog.id)
+    //     await blogService.deleteRecord(blog.id)
+    // }
+
+    return (
+      <div><button onClick={deleteBlog}>remove</button></div>
+    )
+
+  }
   
   const BlogDetails = () => (
     <div>
       <div>{blog.url}</div>
       <div>likes {likes} <LikeButton /></div>
       <div>{blog.user.name}</div>
+      <DeleteButton blog/>
     </div>
   );
 
@@ -58,6 +83,7 @@ const Blog = ({ blog }) => {
       <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
         <BlogDetails />
       </Togglable>
+      {/* <BlogReveal /> */}
     </div>  
 )}
 
