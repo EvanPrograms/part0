@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 const Blog = ({ blog, deleteTheBlog }) => {
   const [likes, setLikes] = useState(blog.likes)
 
-  
 
-  const blogStyle = { 
+
+  const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
     border: 'solid',
@@ -17,7 +17,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
 
   const LikeButton = () => {
     const addLike = async () => {
-      const blogLikesPlus = likes + 1 
+      const blogLikesPlus = likes + 1
       setLikes(blogLikesPlus)
       console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
       const addedLikeObject = {
@@ -43,7 +43,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
       event.preventDefault()
       if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
         console.log('delete blog!', blog.id)
-        deleteTheBlog(blog.id)
+      deleteTheBlog(blog.id)
     }
 
     // const deleteBlog = (event) => {
@@ -58,7 +58,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
     )
 
   }
-  
+
   const BlogDetails = () => (
     <div>
       <div>{blog.url}</div>
@@ -66,14 +66,14 @@ const Blog = ({ blog, deleteTheBlog }) => {
       <div>{blog.user.name}</div>
       <DeleteButton blog/>
     </div>
-  );
+  )
 
   const BlogReveal = () => (
     <Togglable buttonLabel="View" hideButton="hide" buttonTop="true" >
       {/* <div>{blog.url}</div>
       <div>likes {likes} <LikeButton /> </div>
       <div>{blog.user.name} {likes}</div>    */}
-        <BlogDetails />
+      <BlogDetails />
     </Togglable>
   )
 
@@ -84,7 +84,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
         <BlogDetails />
       </Togglable>
       {/* <BlogReveal /> */}
-    </div>  
-)}
+    </div>
+  )}
 
 export default Blog

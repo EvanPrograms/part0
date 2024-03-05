@@ -26,7 +26,7 @@ const update = async (id, newObject) => {
     headers: { Authorization: token }
   }
 
-  try { 
+  try {
     const response = await axios.put(`${baseUrl}/${id}`, newObject, config)
     return response.data
   } catch (error) {
@@ -39,7 +39,7 @@ const deleteRecord = async (id) => {
     headers: { Authorization: token }
   }
 
-  try { 
+  try {
     const response = await axios.delete(`${baseUrl}/${id}`, config)
     return response.data
   } catch (error) {

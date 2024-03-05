@@ -4,7 +4,7 @@ const Notification = ({ message, alert }) => {
   }
 
   return (
-    <div className='notification' style={{ color:alert ? 'red' : 'green'}}>
+    <div className='notification' style={{ color:alert ? 'red' : 'green' }}>
       {message}
     </div>
   )

@@ -28,7 +28,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      
+
       blogService.setToken(user.token)
       console.log('THIS IS USER TOKEN', user.token)
       setUser(user)
@@ -36,7 +36,7 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setErrorMessage({
-        message: `Wrong username or password`,
+        message: 'Wrong username or password',
         alert: true
       })
       setTimeout(() => {
@@ -47,7 +47,7 @@ const App = () => {
       }, 5000)
     }
   }
-  
+
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
 
@@ -66,7 +66,7 @@ const App = () => {
             message: null,
             alert: false
           })
-      }, 5000)
+        }, 5000)
       })
   }
 
@@ -82,7 +82,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [blogs.length])
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      
+
     }
   }, [])
 
@@ -101,7 +101,7 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -110,7 +110,7 @@ const App = () => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
@@ -118,35 +118,35 @@ const App = () => {
           />
         </div>
         <button type="submit">login</button>
-      </form>   
-    </div>   
+      </form>
+    </div>
   )
 
   const blogForm = () => (
     <Togglable buttonLabel="New Blog" ref={blogFormRef} hideButton="cancel" buttonTop="false">
-        <BlogForm createNewBlog={addBlog}/>
-      </Togglable>
+      <BlogForm createNewBlog={addBlog}/>
+    </Togglable>
   )
-  
+
   const blogList = () => {
     const compareLikes = (b, a) => {
-      return a.likes - b.likes;
+      return a.likes - b.likes
     }
 
     return (
-    <div>
-    <h2>blogs</h2>
-    <p>
-      {user.name} logged in <button onClick={logOut} type="submit">logout</button>
-    </p>
-    {blogForm()}
-    {blogs
-      .filter(blog => blog.user.username === user.username)
-      .sort(compareLikes)
-      .map(blog =>
-      <Blog key={blog.id} blog={blog} deleteTheBlog={deleteBlog}/>
-    )}
-    </div>
+      <div>
+        <h2>blogs</h2>
+        <p>
+          {user.name} logged in <button onClick={logOut} type="submit">logout</button>
+        </p>
+        {blogForm()}
+        {blogs
+          .filter(blog => blog.user.username === user.username)
+          .sort(compareLikes)
+          .map(blog =>
+            <Blog key={blog.id} blog={blog} deleteTheBlog={deleteBlog}/>
+          )}
+      </div>
     )
   }
 
