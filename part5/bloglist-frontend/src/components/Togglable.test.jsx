@@ -15,6 +15,7 @@ describe('<Togglable />', () => {
     ).container
   })
 
+
   test('renders its children', async () => {
     await screen.findAllByText('togglable content')
   })

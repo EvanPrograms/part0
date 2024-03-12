@@ -51,7 +51,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
   }
 
   const BlogDetails = () => (
-    <div>
+    <div className='blogDetails'>
       <div>{blog.url}</div>
       <div>likes {likes} <LikeButton /></div>
       <div>{blog.user.name}</div>
@@ -61,7 +61,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
 
   return (
     <div style={blogStyle} className='blog'>
-      {blog.title} {blog.author}
+      <span className='blogTitle'>{blog.title}</span> <span className='blogAuthor'>{blog.author}</span>
       <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
         <BlogDetails />
       </Togglable>
