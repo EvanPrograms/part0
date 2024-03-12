@@ -79,6 +79,11 @@ const App = () => {
       })
   }
 
+  const updateBlog = async (blogId, updatedBlog) => {
+    blogService
+      .update(blogId, updatedBlog)
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -144,7 +149,7 @@ const App = () => {
           .filter(blog => blog.user.username === user.username)
           .sort(compareLikes)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} deleteTheBlog={deleteBlog}/>
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteTheBlog={deleteBlog}/>
           )}
       </div>
     )

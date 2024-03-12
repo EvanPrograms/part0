@@ -2,7 +2,7 @@ import Togglable from '../components/Togglable'
 import blogService from '../services/blogs'
 import { useState, useEffect } from 'react'
 
-const Blog = ({ blog, deleteTheBlog }) => {
+const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
   const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
@@ -14,7 +14,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
   }
 
   const LikeButton = () => {
-    const addLike = async () => {
+    const addLike = (event) => {
       const blogLikesPlus = likes + 1
       setLikes(blogLikesPlus)
       console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
@@ -25,8 +25,7 @@ const Blog = ({ blog, deleteTheBlog }) => {
         title: blog.title,
         url: blog.url
       }
-      await blogService
-        .update(blog.id, addedLikeObject)
+      updateBlog(blog.id, addedLikeObject)
     }
     return (
       <span>
@@ -36,18 +35,15 @@ const Blog = ({ blog, deleteTheBlog }) => {
   }
 
   const DeleteButton = () => {
-
     const deleteBlog = (event) => {
       event.preventDefault()
       if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
         console.log('delete blog!', blog.id)
       deleteTheBlog(blog.id)
     }
-
     return (
       <div><button onClick={deleteBlog}>remove</button></div>
     )
-
   }
 
   const BlogDetails = () => (
