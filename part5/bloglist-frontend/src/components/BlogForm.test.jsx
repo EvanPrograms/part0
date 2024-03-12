@@ -4,6 +4,7 @@ import BlogForm from './BlogForm'
 
 describe('Blogform Tests', () => {
   test('Form calls event handler with right details on creation', async () => {
+    // eslint-disable-next-line no-undef
     const createBlog = vi.fn()
     const user = userEvent.setup()
 

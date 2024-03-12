@@ -43,7 +43,8 @@ describe('Event handler Tests', () => {
       user: 'test user',
       author: 'test author',
       title: 'test title',
-      url: 'test url'
+      url: 'test url',
+      likes: 0
     }
 
     const mockHandler = vi.fn()
@@ -51,14 +52,12 @@ describe('Event handler Tests', () => {
     render(<Blog blog={blog} updateBlog={mockHandler}/>)
 
     const user = userEvent.setup()
-    // const show = screen.getByText('View')
-    // await user.click(show)
     const button = screen.getByText('like')
-    await user.dblClick(button)
+    console.log('MOCKHANDLER CALLS', mockHandler.mock.calls)
     await user.click(button)
+    console.log('MOCKHANDLER CALLS', mockHandler.mock.calls)
     await user.click(button)
-    await user.click(button)
-
+    console.log('MOCKHANDLER CALLS', mockHandler.mock.calls)
     expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
