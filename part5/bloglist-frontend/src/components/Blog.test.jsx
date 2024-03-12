@@ -4,20 +4,8 @@ import Blog from './Blog'
 
 
 describe('Blog tests', () => {
-  // beforeEach(() => {
-  //   const blog = {
-  //     user: 'test user',
-  //     author: 'test author',
-  //     title: 'test title',
-  //     url: 'test url'
-  //   }
-
-  //   const { container } = render(
-  //     <Blog blog={blog}/>
-  //   )
-  // })
-
-  test('renders content', async () => {
+  let container
+  beforeEach(() => {
     const blog = {
       user: 'test user',
       author: 'test author',
@@ -25,10 +13,12 @@ describe('Blog tests', () => {
       url: 'test url'
     }
 
-    const { container } = render(
+    container = render(
       <Blog blog={blog}/>
-    )
+    ).container
+  })
 
+  test('renders author, title; user, likes is hidden', () => {
     const element = screen.getByText('test title')
     expect(element).toBeDefined()
     const elementAuthor = screen.getByText('test author')
@@ -36,4 +26,15 @@ describe('Blog tests', () => {
     const div = container.querySelector('.togglableContent')
     expect(div).toHaveStyle('display: none')
   })
+
+  test('renders URL and likes when button clicked', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('View')
+    await user.click(button)
+
+    const div = container.querySelector('.togglableContent')
+    expect(div).not.toHaveStyle('display: none')
+  })
+
+
 })
