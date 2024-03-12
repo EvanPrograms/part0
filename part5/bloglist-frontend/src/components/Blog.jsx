@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react'
 const Blog = ({ blog, deleteTheBlog }) => {
   const [likes, setLikes] = useState(blog.likes)
 
-
-
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -46,13 +44,6 @@ const Blog = ({ blog, deleteTheBlog }) => {
       deleteTheBlog(blog.id)
     }
 
-    // const deleteBlog = (event) => {
-    //   event.preventDefault()
-    //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
-    //     console.log('delete blog!', blog.id)
-    //     await blogService.deleteRecord(blog.id)
-    // }
-
     return (
       <div><button onClick={deleteBlog}>remove</button></div>
     )
@@ -68,22 +59,12 @@ const Blog = ({ blog, deleteTheBlog }) => {
     </div>
   )
 
-  const BlogReveal = () => (
-    <Togglable buttonLabel="View" hideButton="hide" buttonTop="true" >
-      {/* <div>{blog.url}</div>
-      <div>likes {likes} <LikeButton /> </div>
-      <div>{blog.user.name} {likes}</div>    */}
-      <BlogDetails />
-    </Togglable>
-  )
-
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}
       <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
         <BlogDetails />
       </Togglable>
-      {/* <BlogReveal /> */}
     </div>
   )}
 
