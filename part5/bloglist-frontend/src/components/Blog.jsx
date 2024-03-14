@@ -3,7 +3,7 @@ import blogService from '../services/blogs'
 import { useState, useEffect } from 'react'
 
 const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
-  const [likes, setLikes] = useState(blog.likes)
+  // const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -46,12 +46,27 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
     )
   }
 
+  const handleLikeClick = () => {
+    const updatedBlog = {
+      user: blog.user.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+    }
+    // const blogLikesPlus = likes + 1
+    // setLikes(blogLikesPlus)
+    updateBlog(blog.id, updatedBlog)
+  }
+
   const BlogDetails = () => (
     <div className='blogDetails'>
       <div>{blog.url}</div>
-      <div>likes {likes} <LikeButton /></div>
+      <p>
+        likes: {blog.likes} <button onClick={handleLikeClick}>like</button>
+      </p>
       <div>{blog.user.name}</div>
-      <DeleteButton blog/>
+      <DeleteButton blog />
     </div>
   )
 

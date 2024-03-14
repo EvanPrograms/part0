@@ -79,9 +79,13 @@ const App = () => {
       })
   }
 
-  const updateBlog = async (blogId, updatedBlog) => {
-    blogService
-      .update(blogId, updatedBlog)
+  const updateBlog = async (id, updatedBlog) => {
+    try {
+      const res = await blogService.update(id, updatedBlog)
+      setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
