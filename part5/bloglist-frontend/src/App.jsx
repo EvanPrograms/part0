@@ -8,6 +8,15 @@ import loginService from './services/login'
 
 const App = () => {
   const blogFormRef = useRef()
+  const blankBlog = {
+    url: 'Blank url',
+    title: 'Blank title',
+    author: 'Blank author',
+    user: {
+      username: 'blank username',
+      password: 'blank password'
+    }
+  }
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -143,7 +152,7 @@ const App = () => {
     const compareLikes = (b, a) => {
       return a.likes - b.likes
     }
-
+    console.log('this is blogs', blogs)
     return (
       <div>
         <h2>blogs</h2>
