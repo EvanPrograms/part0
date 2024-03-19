@@ -20,4 +20,22 @@ describe('Blog app', () => {
     const locator = await page.getByText('login')
     await expect(locator).toBeVisible()
   })
+
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await page.getByTestId('username').fill('mluukkai')
+      await page.getByTestId('password').fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
+    })
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await page.getByTestId('username').fill('incorrect')
+      await page.getByTestId('password').fill('incorrect')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('Wrong username')).toBeVisible()
+    })
+  })
 })
