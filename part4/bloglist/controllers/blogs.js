@@ -14,7 +14,7 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   const body = request.body
   const user = request.user
-  console.log('this is request', request)
+  // console.log('this is request', request)
   if (!user) {
     return response.status(401).json({ error: 'WE AINT GOTTA USER!' })
   }

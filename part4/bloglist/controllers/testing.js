@@ -7,6 +7,7 @@ router.post('/reset', async (request, response) => {
   await User.deleteMany({})
 
   response.status(204).end()
+  console.log('ROUTER RESET')
 })
 
 module.exports = router
