@@ -154,7 +154,7 @@ const App = () => {
     }
     console.log('this is blogs', blogs)
     return (
-      <div>
+      <div data-testid='parent'>
         <h2>blogs</h2>
         <p>
           {user.name} logged in <button onClick={logOut} type="submit">logout</button>
