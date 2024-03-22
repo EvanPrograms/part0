@@ -13,26 +13,26 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
     marginBottom: 5
   }
 
-  const LikeButton = () => {
-    const addLike = (event) => {
-      const blogLikesPlus = likes + 1
-      setLikes(blogLikesPlus)
-      console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
-      const addedLikeObject = {
-        user: blog.user.id,
-        likes: blogLikesPlus,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url
-      }
-      updateBlog(blog.id, addedLikeObject)
-    }
-    return (
-      <span>
-        <button onClick={addLike}>like</button>
-      </span>
-    )
-  }
+  // const LikeButton = () => {
+  //   const addLike = (event) => {
+  //     const blogLikesPlus = likes + 1
+  //     setLikes(blogLikesPlus)
+  //     console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
+  //     const addedLikeObject = {
+  //       user: blog.user.id,
+  //       likes: blogLikesPlus,
+  //       author: blog.author,
+  //       title: blog.title,
+  //       url: blog.url
+  //     }
+  //     updateBlog(blog.id, addedLikeObject)
+  //   }
+  //   return (
+  //     <span>
+  //       <button onClick={addLike}>like</button>
+  //     </span>
+  //   )
+  // }
 
   const DeleteButton = () => {
     const deleteBlog = (event) => {
