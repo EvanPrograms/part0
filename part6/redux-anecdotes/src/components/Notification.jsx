@@ -13,11 +13,11 @@ const Notification = () => {
     borderWidth: 1
   }
 
-  if (!notification) return null
+  if (!notification.message) return null
 
   return (
     <div style={style}>
-      {notification}
+      {notification.message}
     </div>
   )
 }
