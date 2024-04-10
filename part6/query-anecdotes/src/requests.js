@@ -9,5 +9,7 @@ export const createAnecdote = (newAnecdote) =>
   axios.post(baseUrl, newAnecdote).then(res => res.data)
 
 export const updateAnecdote = async (updatedAnecdote) => {
-  await axios.put(`${baseUrl}/${updatedAnecdote.id}`, updatedAnecdote).then(res => res.data)
+  console.log('requests updatedAnecdote.votes', updatedAnecdote.votes)
+  const res = await axios.put(`${baseUrl}/${updatedAnecdote.id}`, updatedAnecdote)
+  return res.data
 }
