@@ -2,36 +2,32 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
+import CounterContext from './CounterContext'
+import { useContext } from 'react'
 
 
 const App = () => {
-  
-
   const queryClient = useQueryClient()
+  const [message, messageDispatch] = useContext(CounterContext)
 
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
     onSuccess: (updatedAnecdote) => {
-      console.log('querydata updatedanecdote', updatedAnecdote)
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       const updatedAnecdotes = anecdotes.map((anecdote) =>
         anecdote.id === updatedAnecdote.id ? {...anecdote, votes: anecdote.votes + 1} : anecdote
       )
-      
       queryClient.setQueryData(['anecdotes'], updatedAnecdotes)
-
     }
   })
 
   const handleVote = (anecdote) => {
-    console.log('vote', anecdote)
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1 })
+    messageDispatch({ type: "VOTE", payload: { content: anecdote.content } })
+    setTimeout(() => {
+      messageDispatch({ type: "RESET" })
+    }, 5000)
   }
-
-  // const { data: anecdotes, isLoading, isError } = useQuery(['anecdotes'], getAnecdotes)
-
-  
-
 
   const result = useQuery({
     queryKey: ['anecdotes'],
