@@ -8,6 +8,8 @@ const messageReducer = (state, action) => {
       return `You created a new anecdote "${action.payload.content}"`
     case "RESET":
       return state = ''
+    case "ERROR":
+      return 'too short anecdote, must have length 5 or more'
     default:
       return state
   }
