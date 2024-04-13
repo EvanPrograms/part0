@@ -75,9 +75,9 @@ const CreateNew = (props) => {
   }
 
   const handleReset = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    content.onChange({ target: { value: '' } })
+    author.onChange({ target: { value: '' } })
+    info.onChange({ target: { value: '' } })
   }
 
   return (
