@@ -4,7 +4,9 @@ import {
   Routes,
   Route,
   Link,
-  useParams
+  useParams,
+  useNavigate,
+  useMatch
 } from 'react-router-dom'
 
 const Home = () => (
@@ -23,10 +25,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 )
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id
-  const anecdote = anecdotes.find(anecdote => anecdote.id === Number(id))
-  console.log(anecdote)
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>{anecdote.content} by {anecdote.author}</h2>
@@ -60,6 +59,7 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
+  const navigate = useNavigate()
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
@@ -73,6 +73,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/anecdotes')
   }
 
   return (
@@ -92,7 +93,7 @@ const CreateNew = (props) => {
           <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
         </div>
         <button>create</button>
-      </form>
+      </form> <br />
     </div>
   )
 
@@ -121,6 +122,7 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    console.log(anecdotes)
   }
 
   const anecdoteById = (id) =>
@@ -141,24 +143,27 @@ const App = () => {
     paddingRight: 5
   }
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
   return (
     <div>
-      <Router>
-        <div>
-          <Link style={padding} to="/">Home</Link>
-          <Link style={padding} to="/anecdotes">Anecdotes</Link>
-          <Link style={padding} to="/create">Create New</Link>
-          <Link style={padding} to="/about">About</Link>
-        </div>
+      <div>
+        <Link style={padding} to="/">Home</Link>
+        <Link style={padding} to="/anecdotes">Anecdotes</Link>
+        <Link style={padding} to="/create">Create New</Link>
+        <Link style={padding} to="/about">About</Link>
+      </div>
 
-        <Routes>
-          <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes}/>} />
-          <Route path="/create" element={<CreateNew />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes}/>} />
+        <Route path="/create" element={<CreateNew addNew={addNew}/>} />
+        <Route path="/about" element={<About />} />
+      </Routes>
       <Footer />
     </div>
   )
