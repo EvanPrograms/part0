@@ -5,8 +5,12 @@ import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
+  const dispatch = useDispatch()
+  const notification = useSelector(state => state)
+
   const blogFormRef = useRef();
   const blankBlog = {
     url: "Blank url",
@@ -21,10 +25,6 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState({
-    message: null,
-    alert: false,
-  });
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -42,16 +42,19 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-    } catch (exception) {
-      setErrorMessage({
-        message: "Wrong username or password",
-        alert: true,
+      dispatch({ 
+        type: 'LOGIN',
+        payload: {
+          username: user.username
+        }
       });
       setTimeout(() => {
-        setErrorMessage({
-          message: null,
-          alert: false,
-        });
+        dispatch({ type: 'BLANK' })
+      }, 5000);
+    } catch (exception) {
+      dispatch({ type: 'FAILEDLOGIN' })
+      setTimeout(() => {
+        dispatch({ type: 'BLANK' })
       }, 5000);
     }
   };
@@ -61,17 +64,14 @@ const App = () => {
 
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog));
-      console.log(returnedBlog);
-      console.log(blogs);
-      setErrorMessage({
-        message: `a blog ${blogObject.title} by ${blogObject.author} added`,
-        alert: false,
-      });
+      dispatch({ 
+        type: 'ADDBLOG',
+        payload: {
+          title: returnedBlog.title
+        }
+      })
       setTimeout(() => {
-        setErrorMessage({
-          message: null,
-          alert: false,
-        });
+        dispatch({ type: 'BLANK' })
       }, 5000);
     });
   };
@@ -182,7 +182,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage.message} alert={errorMessage.alert} />
+      <Notification message={notification.message} alert={notification.alert} />
       {user === null ? loginForm() : blogList()}
     </div>
   );
