@@ -3,7 +3,6 @@ import blogService from "../services/blogs";
 import { useState, useEffect } from "react";
 
 const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
-  // const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -13,26 +12,6 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
     marginBottom: 5,
   };
 
-  // const LikeButton = () => {
-  //   const addLike = (event) => {
-  //     const blogLikesPlus = likes + 1
-  //     setLikes(blogLikesPlus)
-  //     console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
-  //     const addedLikeObject = {
-  //       user: blog.user.id,
-  //       likes: blogLikesPlus,
-  //       author: blog.author,
-  //       title: blog.title,
-  //       url: blog.url
-  //     }
-  //     updateBlog(blog.id, addedLikeObject)
-  //   }
-  //   return (
-  //     <span>
-  //       <button onClick={addLike}>like</button>
-  //     </span>
-  //   )
-  // }
 
   const DeleteButton = () => {
     const deleteBlog = (event) => {
@@ -56,8 +35,6 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
       url: blog.url,
       likes: blog.likes + 1,
     };
-    // const blogLikesPlus = likes + 1
-    // setLikes(blogLikesPlus)
     updateBlog(blog.id, updatedBlog);
   };
 

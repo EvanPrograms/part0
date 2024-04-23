@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { createBlog } from "../reducers/blogReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const BlogForm = ({ createNewBlog }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user.user)
 
   const addBlog = (event) => {
     event.preventDefault();
+    console.log('add blog event', event.target.title)
+    console.log('add blog', user)
+    const title = event.target.Title.value
+    const author = event.target.Author.value
+    const url = event.target.URL.value
+    event.target.Title.value = ''
+    event.target.Author.value = ''
+    event.target.URL.value = ''
+    const newBlog = {
+      title: title,
+      author: author,
+      url: url,
+      user: {
+        username: user.username
+      }
+    }
+    dispatch(createBlog(newBlog))
+
     createNewBlog({
       title: title,
       author: author,
       url: url,
     });
-
-    setTitle("");
-    setAuthor("");
-    setUrl("");
   };
 
   return (
@@ -26,9 +41,7 @@ const BlogForm = ({ createNewBlog }) => {
           title:
           <input
             type="text"
-            value={title}
             name="Title"
-            onChange={({ target }) => setTitle(target.value)}
             id="title-input"
             data-testid="title"
           />
@@ -37,9 +50,7 @@ const BlogForm = ({ createNewBlog }) => {
           author:
           <input
             type="text"
-            value={author}
             name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
             id="author-input"
             data-testid="author"
           />
@@ -48,9 +59,7 @@ const BlogForm = ({ createNewBlog }) => {
           url:
           <input
             type="text"
-            value={url}
             name="URL"
-            onChange={({ target }) => setUrl(target.value)}
             id="url-input"
             data-testid="url"
           />

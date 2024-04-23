@@ -2,7 +2,7 @@ const notificationReducer = (state = { message: null, alert: false }, action) =>
   switch (action.type) {
     case 'LOGIN':
       return {
-        message: `Logged in as ${action.payload.username}`,
+        message: `Logged in as ${action.payload.user.username}`,
         alert: false,
       }
     case 'FAILEDLOGIN':
@@ -12,17 +12,20 @@ const notificationReducer = (state = { message: null, alert: false }, action) =>
       }  
     case 'ADDBLOG':
       return {
-        message: `Added the blog: ${action.payload.title}`,
+        message: `Added the blog: ${action.payload.blog.title}`,
         alert: false,
       }
     case 'BLANK':
-      return {
-        message: null,
-        alert: false,
+      if (!action.payload || action.payload.clear) {
+        return {
+          message: null,
+          alert: false,
+        }
       }
     default:
       return state
   }
 }
+
 
 export default notificationReducer
