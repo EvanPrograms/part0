@@ -6,8 +6,9 @@ import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { useDispatch, useSelector } from 'react-redux'
-import { createBlog } from './reducers/blogReducer'
+import { createBlog, deleteBlogAction } from './reducers/blogReducer'
 import { login, logout } from './reducers/userReducer'
+import BlogList from "./components/BlogList"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -60,10 +61,18 @@ const App = () => {
   };
 
   const deleteBlog = (blogObject) => {
-    blogService.deleteRecord(blogObject).then((returnedBlog) => {
-      const blogsAfterDelete = blogs.filter((blog) => blog.id !== blogObject);
-      setBlogs(blogsAfterDelete);
-    });
+    blogService.deleteRecord(blogObject)
+      .then((returnedBlog) => {
+        console.log('Response from delete operation:', returnedBlog);
+        if (returnedBlog) {
+          dispatch(deleteBlogAction(returnedBlog));
+        } else {
+          console.error('Unexpected response from delete operation:', returnedBlog);
+        }
+      })
+      .catch((error) => {
+        console.error('Error while deleting blog:', error);
+      });
   };
 
   const updateBlog = async (id, updatedBlog) => {
@@ -82,6 +91,7 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    console.log('ACTION DISPATCHED USEEFFECT')
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
@@ -132,42 +142,42 @@ const App = () => {
     window.localStorage.clear();
   };
 
-  const blogList = () => {
-    const compareLikes = (b, a) => {
-      return a.likes - b.likes;
-    };
-    console.log("this is blogs", blogs);
-    return (
-      <div data-testid="parent">
-        <h2>blogs</h2>
-        <p>
-          {user.name} logged in{" "}
-          <button onClick={logOut} type="submit">
-            logout
-          </button>
-        </p>
-        {blogForm()}
-        {blogs
-          .filter((blog) => blog.user.username === user.username)
-          .sort(compareLikes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              updateBlog={updateBlog}
-              deleteTheBlog={deleteBlog}
-            />
-          ))}
-      </div>
-    );
-  };
+  // const blogList = () => {
+  //   const compareLikes = (b, a) => {
+  //     return a.likes - b.likes;
+  //   };
+  //   console.log("this is blogs", blogs);
+  //   return (
+  //     <div data-testid="parent">
+  //       <h2>blogs</h2>
+  //       <p>
+  //         {user.name} logged in{" "}
+  //         <button onClick={logOut} type="submit">
+  //           logout
+  //         </button>
+  //       </p>
+  //       {blogForm()}
+  //       {blogs
+  //         .filter((blog) => blog.user.username === user.username)
+  //         .sort(compareLikes)
+  //         .map((blog) => (
+  //           <Blog
+  //             key={blog.id}
+  //             blog={blog}
+  //             updateBlog={updateBlog}
+  //             deleteTheBlog={deleteBlog}
+  //           />
+  //         ))}
+  //     </div>
+  //   );
+  // };
 
   
 
   return (
     <div>
       <Notification message={notification.message} alert={notification.alert} />
-      {user === null ? loginForm() : blogList()}
+      {user === null ? loginForm() : <BlogList />}
     </div>
   );
 };
