@@ -22,6 +22,11 @@ const notificationReducer = (state = { message: null, alert: false }, action) =>
           alert: false,
         }
       }
+    case 'VOTEBLOG':
+      return {
+        message: `Vote Added to blog: ${action.payload.blog.title}`,
+        alert: false,
+      }
     default:
       return state
   }

@@ -4,8 +4,6 @@ import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 import { logout } from "../reducers/userReducer";
 import { useRef } from "react";
-import blogService from "../services/blogs";
-import { createBlog, deleteBlogAction } from '../reducers/blogReducer'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
@@ -36,40 +34,8 @@ const BlogList = () => {
     return a.likes - b.likes;
   };
 
-  const addBlog = (blogObject) => {
+  const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
-
-    blogService.create(blogObject).then((returnedBlog) => {
-      dispatch(createBlog(returnedBlog));
-      dispatch({ type: 'ADDBLOG', payload: { blog: returnedBlog } })
-      setTimeout(() => {
-        dispatch({ type: 'BLANK', payload: { clear: true } })
-      }, 2000);
-    });
-  };
-
-  const updateBlog = async (id, updatedBlog) => {
-    try {
-      const res = await blogService.update(id, updatedBlog);
-      setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteBlog = (blogObject) => {
-    blogService.deleteRecord(blogObject)
-      .then((returnedBlog) => {
-        console.log('Response from delete operation:', returnedBlog);
-        if (returnedBlog) {
-          dispatch(deleteBlogAction(returnedBlog));
-        } else {
-          console.error('Unexpected response from delete operation:', returnedBlog);
-        }
-      })
-      .catch((error) => {
-        console.error('Error while deleting blog:', error);
-      });
   };
 
   return (
@@ -89,8 +55,6 @@ const BlogList = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlog={updateBlog}
-            deleteTheBlog={deleteBlog}
           />
         ))}
     </div>

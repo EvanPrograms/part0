@@ -1,31 +1,13 @@
 import { createBlog } from "../reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
 import blogService from "../services/blogs";
-import { useRef } from 'react'
+import React from 'react'
 
-
-
-
-
-const BlogForm = ({ createNewBlog }) => {
-
-
+const BlogForm = ({ createNewBlog }, ref) => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user.user)
 
-  // const addBlog = (blogObject) => {
-  //   blogFormRef.current.toggleVisibility();
-
-    // blogService.create(blogObject).then((returnedBlog) => {
-    //   dispatch(createBlog(returnedBlog));
-    //   dispatch({ type: 'ADDBLOG', payload: { blog: returnedBlog } })
-    //   setTimeout(() => {
-    //     dispatch({ type: 'BLANK', payload: { clear: true } })
-    //   }, 2000);
-    // });
-  // };
-
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault();
     const title = event.target.Title.value
     const author = event.target.Author.value
@@ -33,26 +15,30 @@ const BlogForm = ({ createNewBlog }) => {
     event.target.Title.value = ''
     event.target.Author.value = ''
     event.target.URL.value = ''
-    const newBlog = {
+    const blogObject = {
+      url: url,
       title: title,
       author: author,
-      url: url,
       user: {
-        username: user.username
-      }
+        username: user.username,
+        name: user.name
+      },
+      likes: 0
     }
-    
-    //HERE I HAVE WEIRD BEHIAVIOR< EITHER NEED BOTH OF THESE DISPATCHES
-    // BUT THEN I GET WEIRD ACTIONS TO STATE. IF I REMOVE the DISPATCH,
-    // THEN THE REDUX DOESNT UPDATE UNTIL I REFRESH
+
+    const returnedBlog = await blogService.create(blogObject)
+    const newBlog = {
+      ...blogObject,
+      id: returnedBlog.id
+    }
+
     createNewBlog(newBlog);
     dispatch(createBlog(newBlog))
 
-    // createNewBlog({
-    //   title: title,
-    //   author: author,
-    //   url: url,
-    // });
+    dispatch({ type: 'ADDBLOG', payload: { blog: returnedBlog } })
+      setTimeout(() => {
+        dispatch({ type: 'BLANK', payload: { clear: true } })
+      }, 2000);
   };
 
   return (
@@ -92,4 +78,4 @@ const BlogForm = ({ createNewBlog }) => {
   );
 };
 
-export default BlogForm;
+export default React.forwardRef(BlogForm);

@@ -1,9 +1,8 @@
-import Togglable from "../components/Togglable";
-import blogService from "../services/blogs";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import Togglable from "./Togglable";
+import BlogDetails from "./BlogDetails";
 
-const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
+const Blog = ({ blog }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -13,49 +12,14 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
     marginBottom: 5,
   };
 
-
-  const DeleteButton = () => {
-    const deleteBlog = (event) => {
-      event.preventDefault();
-      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
-        console.log("delete blog!", blog.id);
-      deleteTheBlog(blog.id);
-    };
-    return (
-      <div>
-        <button onClick={deleteBlog}>remove</button>
-      </div>
-    );
-  };
-
-  const handleLikeClick = () => {
-    const updatedBlog = {
-      user: blog.user.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-    };
-    updateBlog(blog.id, updatedBlog);
-  };
-
-  const BlogDetails = () => (
-    <div className="blogDetails" data-testid="blog">
-      <div>{blog.url}</div>
-      <p>
-        likes: {blog.likes} <button onClick={handleLikeClick}>like</button>
-      </p>
-      <div>{blog.user.name}</div>
-      <DeleteButton blog />
-    </div>
-  );
-
   return (
-    <div style={blogStyle} className="blog" title="blog">
-      <span className="blogTitle">{blog.title}</span>{" "}
-      <span className="blogAuthor">{blog.author}</span>
-      <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
-        <BlogDetails />
+    <div style={blogStyle}>
+      <div>
+        <span className="blogTitle">{blog.title}</span>{" "}
+        <span className="blogAuthor">{blog.author}</span>
+      </div>
+      <Togglable buttonLabel="View" hideButton="Hide">
+        <BlogDetails blog={blog} />
       </Togglable>
     </div>
   );

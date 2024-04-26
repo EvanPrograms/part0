@@ -25,7 +25,7 @@ blogsRouter.post(
       author: body.author,
       url: body.url,
       likes: body.likes || 0,
-      user: user.id,
+      user: user._id,
     });
 
     const savedBlog = await blog.save();
@@ -42,7 +42,7 @@ blogsRouter.delete(
     const user = request.user;
 
     await Blog.findByIdAndDelete(request.params.id);
-    response.status(204).json("Deleted the entry!");
+    response.status(204).end();
   },
 );
 
