@@ -5,9 +5,52 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
+import { useReducer } from 'react'
+import NotificationContext from './NotificationContext'
+
+const notificationReducer = (state, action) => {
+  switch (action.type) {
+  case 'LOGIN':
+    return {
+      message: `Logged in with ${action.payload.user.username}`,
+      alert: false
+    }
+  case 'ADDBLOG':
+    return {
+      message: `Added blog: ${action.payload.blog.title}`,
+      alert: false
+    }
+  case 'VOTEBLOG':
+    return {
+      message: `Like added to ${action.payload.blog.title}`,
+      alert: false
+    }
+  case 'INCORRECTLOGIN':
+    return {
+      message: 'Wrong username or password!',
+      alert: true
+    }
+  case 'BLANK':
+    if (!action.payload || action.payload.clear) {
+      return {
+        message: null,
+        alert: false,
+      }
+    }
+  default:
+    return state
+  }
+}
 
 const App = () => {
   const blogFormRef = useRef()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+  const [notification, notificationDispatch] = useReducer(notificationReducer, { message: null, alert: false })
+
   const blankBlog = {
     url: 'Blank url',
     title: 'Blank title',
@@ -17,14 +60,32 @@ const App = () => {
       password: 'blank password'
     }
   }
-  const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState({
-    message: null,
-    alert: false
-  })
+
+  
+
+  const { isLoading, data: blogs } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: () => axios.get('http://localhost:5173/api/blogs/').then(response => response.data)
+  });
+
+  // useEffect(() => {
+  //   blogService.getAll()
+  //     .then(blogs => setBlogs( blogs ))
+  // }, [blogs.length])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
+  if (isLoading) {
+    return <div>loading data...</div>;
+  }
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -43,17 +104,15 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage({
-        message: 'Wrong username or password',
-        alert: true
-      })
+      notificationDispatch({ type: 'LOGIN', payload: { user } })
       setTimeout(() => {
-        setErrorMessage({
-          message: null,
-          alert: false
-        })
-      }, 5000)
+        notificationDispatch({ type: 'BLANK' })
+      }, 2000)
+    } catch (exception) {
+      notificationDispatch({ type: 'INCORRECTLOGIN' })
+      setTimeout(() => {
+        notificationDispatch({ type: 'BLANK' })
+      }, 2000)
     }
   }
 
@@ -63,18 +122,16 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        // setBlogs(blogs.concat(returnedBlog))
         console.log(returnedBlog)
         console.log(blogs)
-        setErrorMessage({
-          message: `a blog ${blogObject.title} by ${blogObject.author} added`,
-          alert: false
-        })
+        notificationDispatch({ type: 'ADDBLOG', payload: { blog } })
+        // setErrorMessage({
+        //   message: `a blog ${blogObject.title} by ${blogObject.author} added`,
+        //   alert: false
+        // })
         setTimeout(() => {
-          setErrorMessage({
-            message: null,
-            alert: false
-          })
+          notificationDispatch({ type: 'BLANK' })
         }, 5000)
       })
   }
@@ -84,34 +141,32 @@ const App = () => {
       .deleteRecord(blogObject)
       .then(returnedBlog => {
         const blogsAfterDelete = blogs.filter(blog => blog.id !== blogObject)
-        setBlogs(blogsAfterDelete)
+        // setBlogs(blogsAfterDelete)
       })
   }
 
   const updateBlog = async (id, updatedBlog) => {
     try {
       const res = await blogService.update(id, updatedBlog)
-      setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
+      // setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
     } catch (error) {
       console.error(error)
     }
   }
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [blogs.length])
+  // useEffect(() => {
+  //   blogService.getAll()
+  //     // .then(blogs => setBlogs( blogs ))
+  // }, [blogs.length])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-
-    }
-  }, [])
+  // useEffect(() => {
+  //   const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+  //   if (loggedUserJSON) {
+  //     const user = JSON.parse(loggedUserJSON)
+  //     setUser(user)
+  //     blogService.setToken(user.token)
+  //   }
+  // }, [])
 
   const loginForm = () => (
     <div>
@@ -177,10 +232,12 @@ const App = () => {
 
 
   return (
-    <div>
-      <Notification message={errorMessage.message} alert={errorMessage.alert}/>
-      {user === null ? loginForm() : blogList()}
-    </div>
+    <NotificationContext.Provider value={[notification, notificationDispatch]}>
+      <div>
+        <Notification message={notification.message} alert={notification.alert}/>
+        {user === null ? loginForm() : blogList()}
+      </div>
+    </NotificationContext.Provider>
   )
 }
 
