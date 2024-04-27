@@ -1,5 +1,49 @@
-import { createContext } from "react";
+import { createContext, useReducer } from "react";
+
+const notificationReducer = (state, action) => {
+  switch (action.type) {
+  case 'LOGIN':
+    return {
+      message: `Logged in with ${action.payload.user.username}`,
+      alert: false
+    }
+  case 'ADDBLOG':
+    return {
+      message: `Added blog: ${action.payload.blog.title}`,
+      alert: false
+    }
+  case 'VOTEBLOG':
+    return {
+      message: `Like added to ${action.payload.blog.title}`,
+      alert: false
+    }
+  case 'INCORRECTLOGIN':
+    return {
+      message: 'Wrong username or password!',
+      alert: true
+    }
+  case 'BLANK':
+    if (!action.payload || action.payload.clear) {
+      return {
+        message: null,
+        alert: false,
+      }
+    }
+    return state
+  default:
+    return state
+  }
+}
 
 const NotificationContext = createContext()
+
+export const NotificationContextProvider = (props) => {
+  const [notification, notificationDispatch] = useReducer(notificationReducer, { message: null, alert: false })
+  return (
+    <NotificationContext.Provider value={[notification, notificationDispatch] }>
+      {props.children}
+    </NotificationContext.Provider>
+  )
+}
 
 export default NotificationContext

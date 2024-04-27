@@ -7,49 +7,15 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
-import { useReducer } from 'react'
+import { useReducer, useContext } from 'react'
 import NotificationContext from './NotificationContext'
-
-const notificationReducer = (state, action) => {
-  switch (action.type) {
-  case 'LOGIN':
-    return {
-      message: `Logged in with ${action.payload.user.username}`,
-      alert: false
-    }
-  case 'ADDBLOG':
-    return {
-      message: `Added blog: ${action.payload.blog.title}`,
-      alert: false
-    }
-  case 'VOTEBLOG':
-    return {
-      message: `Like added to ${action.payload.blog.title}`,
-      alert: false
-    }
-  case 'INCORRECTLOGIN':
-    return {
-      message: 'Wrong username or password!',
-      alert: true
-    }
-  case 'BLANK':
-    if (!action.payload || action.payload.clear) {
-      return {
-        message: null,
-        alert: false,
-      }
-    }
-  default:
-    return state
-  }
-}
 
 const App = () => {
   const blogFormRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, notificationDispatch] = useReducer(notificationReducer, { message: null, alert: false })
+  const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const blankBlog = {
     url: 'Blank url',
