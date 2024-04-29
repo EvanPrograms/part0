@@ -9,7 +9,7 @@ const notificationReducer = (state, action) => {
     }
   case 'ADDBLOG':
     return {
-      message: `Added blog: ${action.payload.blog.title}`,
+      message: `Added blog: ${action.payload.newBlog.title}`,
       alert: false
     }
   case 'VOTEBLOG':

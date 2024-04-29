@@ -1,17 +1,39 @@
 import { useState } from 'react'
+import { createBlog } from '../requests'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import blogService from '../services/blogs'
+import NotificationContext from '../NotificationContext'
+import { useReducer, useContext } from 'react'
 
-const BlogForm = ({ createNewBlog }) => {
+const BlogForm = ({ createNewBlog, userToken }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  console.log('Blogform usertoken', userToken)
+  const [notification, notificationDispatch] = useContext(NotificationContext)
 
-  const addBlog = (event) => {
+
+
+  const queryClient = useQueryClient()
+  const newBlogMutation = useMutation({
+    // mutationFn: createBlog,
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
+
+  const addBlog = async (event) => {
     event.preventDefault()
-    createNewBlog({
-      title: title,
-      author: author,
-      url: url
-    })
+    const newBlog = { title, author, url }
+    console.log('addblog user token', userToken)
+    createNewBlog(newBlog, userToken, 'THIS IS JOB')
+
+    newBlogMutation.mutate(newBlog, userToken)
+    notificationDispatch({ type: 'ADDBLOG', payload: { newBlog } })
+    setTimeout(() => {
+      notificationDispatch({ type: 'BLANK' })
+    }, 2000)
 
     setTitle('')
     setAuthor('')

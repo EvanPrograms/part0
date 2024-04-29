@@ -6,9 +6,10 @@ import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import axios from 'axios'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { useReducer, useContext } from 'react'
 import NotificationContext from './NotificationContext'
+import { getBlogs, createBlog } from './requests'
 
 const App = () => {
   const blogFormRef = useRef()
@@ -16,6 +17,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, notificationDispatch] = useContext(NotificationContext)
+
+  const newBlogMutation = useMutation({ mutationFn: createBlog })
 
   const blankBlog = {
     url: 'Blank url',
@@ -27,11 +30,10 @@ const App = () => {
     }
   }
 
-  
-
   const { isLoading, data: blogs } = useQuery({
     queryKey: ['blogs'],
-    queryFn: () => axios.get('http://localhost:5173/api/blogs/').then(response => response.data)
+    // queryFn: () => axios.get('http://localhost:5173/api/blogs/').then(response => response.data)
+    queryFn: getBlogs
   });
 
   // useEffect(() => {
@@ -85,21 +87,20 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
 
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        // setBlogs(blogs.concat(returnedBlog))
-        console.log(returnedBlog)
-        console.log(blogs)
-        notificationDispatch({ type: 'ADDBLOG', payload: { blog } })
-        // setErrorMessage({
-        //   message: `a blog ${blogObject.title} by ${blogObject.author} added`,
-        //   alert: false
-        // })
-        setTimeout(() => {
-          notificationDispatch({ type: 'BLANK' })
-        }, 5000)
-      })
+    // blogService
+    //   .create(blogObject)
+    //   .then(returnedBlog => {
+    //     // setBlogs(blogs.concat(returnedBlog))
+    //     console.log('adding blog', returnedBlog)
+    //     notificationDispatch({ type: 'ADDBLOG', payload: { returnedBlog } })
+    //     // setErrorMessage({
+    //     //   message: `a blog ${blogObject.title} by ${blogObject.author} added`,
+    //     //   alert: false
+    //     // })
+    //     setTimeout(() => {
+    //       notificationDispatch({ type: 'BLANK' })
+    //     }, 5000)
+    //   })
   }
 
   const deleteBlog = (blogObject) => {
@@ -165,7 +166,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="New Blog" ref={blogFormRef} hideButton="cancel" buttonTop="false">
-      <BlogForm createNewBlog={addBlog}/>
+      <BlogForm createNewBlog={addBlog} userToken={user.token}/>
     </Togglable>
   )
 
