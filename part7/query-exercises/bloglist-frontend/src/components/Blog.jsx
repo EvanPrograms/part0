@@ -1,9 +1,15 @@
 import Togglable from '../components/Togglable'
 import blogService from '../services/blogs'
 import { useState, useEffect } from 'react'
+import { updateBlog, deleteBlog } from '../requests'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useReducer, useContext } from 'react'
+import NotificationContext from '../NotificationContext'
 
-const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
-  // const [likes, setLikes] = useState(blog.likes)
+const Blog = ({ blog }) => {
+  const [notification, notificationDispatch] = useContext(NotificationContext)
+
+  const queryClient = useQueryClient()
 
   const blogStyle = {
     paddingTop: 10,
@@ -13,51 +19,68 @@ const Blog = ({ blog, updateBlog, deleteTheBlog }) => {
     marginBottom: 5
   }
 
-  // const LikeButton = () => {
-  //   const addLike = (event) => {
-  //     const blogLikesPlus = likes + 1
-  //     setLikes(blogLikesPlus)
-  //     console.log('like added!', blog.id, blog.user.id, blog.likes + 1, blog.author, blog.title, blog.url)
-  //     const addedLikeObject = {
-  //       user: blog.user.id,
-  //       likes: blogLikesPlus,
-  //       author: blog.author,
-  //       title: blog.title,
-  //       url: blog.url
-  //     }
-  //     updateBlog(blog.id, addedLikeObject)
-  //   }
-  //   return (
-  //     <span>
-  //       <button onClick={addLike}>like</button>
-  //     </span>
-  //   )
-  // }
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteRecord,
+    onSuccess: (deletedBlog) => {
+      queryClient.setQueryData(['blogs'], (blogs) => {
+        return blogs.filter((blog) => {
+          blog.id !== deletedBlog.id
+        })
+      })
+      queryClient.invalidateQueries('blogs')
+    }
+  })
+
 
   const DeleteButton = () => {
     const deleteBlog = (event) => {
+      const deletedBlog = {
+        ...blog,
+        user: blog.user.id
+      }
       event.preventDefault()
-      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
+      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
         console.log('delete blog!', blog.id)
-      deleteTheBlog(blog.id)
+        deleteBlogMutation.mutate(deletedBlog.id)
+        notificationDispatch({ type: 'DELETEBLOG', payload: { deletedBlog } })
+        setTimeout(() => {
+          notificationDispatch({ type: 'BLANK' })
+        }, 2000)
+      }
     }
     return (
       <div><button onClick={deleteBlog}>remove</button></div>
     )
   }
 
-  const handleLikeClick = () => {
-    const updatedBlog = {
-      user: blog.user.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
+  const updateBlogMutation = useMutation({
+    mutationFn: updateBlog,
+    onSuccess: (updatedBlog) => {
+      queryClient.setQueryData(['blogs'], (blogs) => {
+        return blogs.map((blog) =>
+          blog.id === updatedBlog.id ? updatedBlog : blog
+        )
+      })
+      notificationDispatch({ type: 'ADDLIKE', payload: { updatedBlog } })
+      setTimeout(() => {
+        notificationDispatch({ type: 'BLANK' })
+      }, 2000)
     }
-    // const blogLikesPlus = likes + 1
-    // setLikes(blogLikesPlus)
-    updateBlog(blog.id, updatedBlog)
+  })
+
+  const handleLikeClick = async () => {
+    const updatedBlog = {
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1
+    }
+    updateBlogMutation.mutate(updatedBlog)
+    // notificationDispatch({ type: 'ADDLIKE', payload: { updatedBlog } })
+    // setTimeout(() => {
+    //   notificationDispatch({ type: 'BLANK' })
+    // }, 2000)
   }
+
 
   const BlogDetails = () => (
     <div className='blogDetails' data-testid='blog'>

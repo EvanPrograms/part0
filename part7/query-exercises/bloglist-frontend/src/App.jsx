@@ -105,24 +105,6 @@ const App = () => {
     //   })
   }
 
-  const deleteBlog = (blogObject) => {
-    blogService
-      .deleteRecord(blogObject)
-      .then(returnedBlog => {
-        const blogsAfterDelete = blogs.filter(blog => blog.id !== blogObject)
-        // setBlogs(blogsAfterDelete)
-      })
-  }
-
-  const updateBlog = async (id, updatedBlog) => {
-    try {
-      const res = await blogService.update(id, updatedBlog)
-      // setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   // useEffect(() => {
   //   blogService.getAll()
   //     // .then(blogs => setBlogs( blogs ))
@@ -188,7 +170,7 @@ const App = () => {
           .filter(blog => blog.user.username === user.username)
           .sort(compareLikes)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteTheBlog={deleteBlog}/>
+            <Blog key={blog.id} blog={blog} />
           )}
       </div>
     )

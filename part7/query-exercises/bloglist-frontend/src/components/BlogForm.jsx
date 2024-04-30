@@ -17,15 +17,9 @@ const BlogForm = ({ createNewBlog, userToken }) => {
 
   const queryClient = useQueryClient()
   const newBlogMutation = useMutation({
-    // mutationFn: createBlog,
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
-      // const blogs = queryClient.getQueryData(['blogs'])
-      // queryClient.setQueryData(['blogs'], [...blogs, newBlog])
-      // queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
-      // const existingBlogs = queryClient.getQueryData(['blogs']);
-      // queryClient.setQueryData(['blogs'], [...existingBlogs, newBlog]);
     }
   })
 

@@ -12,6 +12,16 @@ const notificationReducer = (state, action) => {
       message: `Added blog: ${action.payload.newBlog.title}`,
       alert: false
     }
+  case 'ADDLIKE':
+    return {
+      message: `Liked blog: ${action.payload.updatedBlog.title}`,
+      alert: false
+    }
+  case 'DELETEBLOG':
+    return {
+      message: `Deleted Blog: ${action.payload.deletedBlog.title}`,
+      alert: true
+    }
   case 'VOTEBLOG':
     return {
       message: `Like added to ${action.payload.blog.title}`,
