@@ -33,7 +33,9 @@ const App = () => {
   const { isLoading, data: blogs } = useQuery({
     queryKey: ['blogs'],
     // queryFn: () => axios.get('http://localhost:5173/api/blogs/').then(response => response.data)
-    queryFn: getBlogs
+    queryFn: getBlogs,
+    // queryFn: blogService.getAll,
+    refetchOnWindowFocus: false
   });
 
   // useEffect(() => {
@@ -85,7 +87,7 @@ const App = () => {
   }
 
   const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility()
+    // blogFormRef.current.toggleVisibility()
 
     // blogService
     //   .create(blogObject)

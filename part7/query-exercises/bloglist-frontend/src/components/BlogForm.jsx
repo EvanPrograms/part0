@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createBlog } from '../requests'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import blogService from '../services/blogs'
 import NotificationContext from '../NotificationContext'
 import { useReducer, useContext } from 'react'
+
 
 const BlogForm = ({ createNewBlog, userToken }) => {
   const [title, setTitle] = useState('')
@@ -11,15 +12,20 @@ const BlogForm = ({ createNewBlog, userToken }) => {
   const [url, setUrl] = useState('')
   console.log('Blogform usertoken', userToken)
   const [notification, notificationDispatch] = useContext(NotificationContext)
-
+  const blogFormRef = useRef()
 
 
   const queryClient = useQueryClient()
   const newBlogMutation = useMutation({
     // mutationFn: createBlog,
     mutationFn: blogService.create,
-    onSuccess: () => {
+    onSuccess: (newBlog) => {
+      // const blogs = queryClient.getQueryData(['blogs'])
+      // queryClient.setQueryData(['blogs'], [...blogs, newBlog])
+      // queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      // const existingBlogs = queryClient.getQueryData(['blogs']);
+      // queryClient.setQueryData(['blogs'], [...existingBlogs, newBlog]);
     }
   })
 
@@ -29,7 +35,7 @@ const BlogForm = ({ createNewBlog, userToken }) => {
     console.log('addblog user token', userToken)
     createNewBlog(newBlog, userToken, 'THIS IS JOB')
 
-    newBlogMutation.mutate(newBlog, userToken)
+    newBlogMutation.mutate(newBlog)
     notificationDispatch({ type: 'ADDBLOG', payload: { newBlog } })
     setTimeout(() => {
       notificationDispatch({ type: 'BLANK' })
