@@ -19,7 +19,7 @@ const notificationReducer = (state, action) => {
     }
   case 'DELETEBLOG':
     return {
-      message: `Deleted Blog: ${action.payload.deletedBlog.title}`,
+      message: `Deleted Blog: ${action.payload.blog.title}`,
       alert: true
     }
   case 'VOTEBLOG':

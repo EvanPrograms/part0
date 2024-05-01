@@ -5,52 +5,35 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import axios from 'axios'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useReducer, useContext } from 'react'
 import NotificationContext from './NotificationContext'
 import { getBlogs, createBlog } from './requests'
+import UserContext from './UserContext'
+
 
 const App = () => {
   const blogFormRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
-  const newBlogMutation = useMutation({ mutationFn: createBlog })
-
-  const blankBlog = {
-    url: 'Blank url',
-    title: 'Blank title',
-    author: 'Blank author',
-    user: {
-      username: 'blank username',
-      password: 'blank password'
-    }
-  }
+  const [user, userDispatch] = useContext(UserContext)
 
   const { isLoading, data: blogs } = useQuery({
     queryKey: ['blogs'],
-    // queryFn: () => axios.get('http://localhost:5173/api/blogs/').then(response => response.data)
     queryFn: getBlogs,
-    // queryFn: blogService.getAll,
     refetchOnWindowFocus: false
   });
-
-  // useEffect(() => {
-  //   blogService.getAll()
-  //     .then(blogs => setBlogs( blogs ))
-  // }, [blogs.length])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({ type: 'LOGIN', payload: user })
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [userDispatch])
 
   if (isLoading) {
     return <div>loading data...</div>;
@@ -71,7 +54,7 @@ const App = () => {
 
       blogService.setToken(user.token)
       console.log('THIS IS USER TOKEN', user.token)
-      setUser(user)
+      userDispatch({ type: 'LOGIN', payload: user })
       setUsername('')
       setPassword('')
       notificationDispatch({ type: 'LOGIN', payload: { user } })
@@ -85,39 +68,6 @@ const App = () => {
       }, 2000)
     }
   }
-
-  const addBlog = (blogObject) => {
-    // blogFormRef.current.toggleVisibility()
-
-    // blogService
-    //   .create(blogObject)
-    //   .then(returnedBlog => {
-    //     // setBlogs(blogs.concat(returnedBlog))
-    //     console.log('adding blog', returnedBlog)
-    //     notificationDispatch({ type: 'ADDBLOG', payload: { returnedBlog } })
-    //     // setErrorMessage({
-    //     //   message: `a blog ${blogObject.title} by ${blogObject.author} added`,
-    //     //   alert: false
-    //     // })
-    //     setTimeout(() => {
-    //       notificationDispatch({ type: 'BLANK' })
-    //     }, 5000)
-    //   })
-  }
-
-  // useEffect(() => {
-  //   blogService.getAll()
-  //     // .then(blogs => setBlogs( blogs ))
-  // }, [blogs.length])
-
-  // useEffect(() => {
-  //   const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-  //   if (loggedUserJSON) {
-  //     const user = JSON.parse(loggedUserJSON)
-  //     setUser(user)
-  //     blogService.setToken(user.token)
-  //   }
-  // }, [])
 
   const loginForm = () => (
     <div>
@@ -150,7 +100,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="New Blog" ref={blogFormRef} hideButton="cancel" buttonTop="false">
-      <BlogForm createNewBlog={addBlog} userToken={user.token}/>
+      <BlogForm userToken={user.token}/>
     </Togglable>
   )
 
@@ -177,18 +127,16 @@ const App = () => {
   }
 
   const logOut = () => {
-    setUser(null)
+    userDispatch({ type: 'LOGOUT', payload: null })
     window.localStorage.clear()
   }
 
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispatch]}>
-      <div>
-        <Notification message={notification.message} alert={notification.alert}/>
-        {user === null ? loginForm() : blogList()}
-      </div>
-    </NotificationContext.Provider>
+    <div>
+      <Notification message={notification.message} alert={notification.alert}/>
+      {user === null ? loginForm() : blogList()}
+    </div>
   )
 }
 

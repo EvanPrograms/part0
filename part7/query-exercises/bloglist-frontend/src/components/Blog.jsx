@@ -42,7 +42,7 @@ const Blog = ({ blog }) => {
       if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
         console.log('delete blog!', blog.id)
         deleteBlogMutation.mutate(deletedBlog.id)
-        notificationDispatch({ type: 'DELETEBLOG', payload: { deletedBlog } })
+        notificationDispatch({ type: 'DELETEBLOG', payload: { blog } })
         setTimeout(() => {
           notificationDispatch({ type: 'BLANK' })
         }, 2000)
@@ -75,10 +75,6 @@ const Blog = ({ blog }) => {
       likes: blog.likes + 1
     }
     updateBlogMutation.mutate(updatedBlog)
-    // notificationDispatch({ type: 'ADDLIKE', payload: { updatedBlog } })
-    // setTimeout(() => {
-    //   notificationDispatch({ type: 'BLANK' })
-    // }, 2000)
   }
 
 

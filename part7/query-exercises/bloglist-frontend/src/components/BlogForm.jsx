@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import { createBlog } from '../requests'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import blogService from '../services/blogs'
 import NotificationContext from '../NotificationContext'
@@ -10,7 +9,7 @@ const BlogForm = ({ createNewBlog, userToken }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  console.log('Blogform usertoken', userToken)
+
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const blogFormRef = useRef()
 
@@ -20,6 +19,7 @@ const BlogForm = ({ createNewBlog, userToken }) => {
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      blogFormRef.current.toggleVisibility()
     }
   })
 
@@ -27,7 +27,6 @@ const BlogForm = ({ createNewBlog, userToken }) => {
     event.preventDefault()
     const newBlog = { title, author, url }
     console.log('addblog user token', userToken)
-    createNewBlog(newBlog, userToken, 'THIS IS JOB')
 
     newBlogMutation.mutate(newBlog)
     notificationDispatch({ type: 'ADDBLOG', payload: { newBlog } })
