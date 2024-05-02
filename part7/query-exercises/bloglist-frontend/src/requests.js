@@ -35,6 +35,10 @@ export const getUsers = async () => {
   return await axios.get(`${baseUrl}/users`).then(response => response.data)
 }
 
+export const getUser = async (id) => {
+  return await axios.get(`${baseUrl}/users/${id}`).then(response => response.data)
+
+}
 
 // const create = async newObject => {
 //   const config = {
