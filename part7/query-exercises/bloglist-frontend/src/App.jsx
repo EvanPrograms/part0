@@ -181,68 +181,32 @@ const App = () => {
     )
   }
 
-  // const BlogDetailed = ({ blog }) => {
-  //   // const { data: blogs } = useQuery({
-  //   //   queryKey: ['blogs'],
-  //   //   queryFn: getBlogs,
-  //   //   refetchOnWindowFocus: false
-  //   // });
-
-  //   // console.log('This is blogs', blogs)
-  //   // console.log('BLOG DETAILS', blogs)
-  //   const id = useParams().id
-  //   // const blogDetail = blogs.filter(blog => blog.id === id)[0]
-  //   const blogDetail = blogs.find(blog => blog.id === id)
-  //   console.log(blogDetail)
-  //   if (!blogDetail) {
-  //     return <div>blog not found in blog details!</div>
-  //   }
-
-  //   const updateBlogMutation = useMutation({
-  //     mutationFn: updateBlog,
-  //     onSuccess: (updatedBlog) => {
-  //       queryClient.setQueryData(['blogs'], (blogs) => {
-  //         return blogs.map((blog) =>
-  //           blog.id === updatedBlog.id ? updatedBlog : blog
-  //         )
-  //       })
-  //       notificationDispatch({ type: 'ADDLIKE', payload: { updatedBlog } })
-  //       setTimeout(() => {
-  //         notificationDispatch({ type: 'BLANK' })
-  //       }, 2000)
-  //     }
-  //   })
-
-  //   const handleLikeClick = async () => {
-  //     const updatedBlog = {
-  //       ...blog,
-  //       user: blog.user.id,
-  //       likes: blog.likes + 1
-  //     }
-  //     updateBlogMutation.mutate(updatedBlog)
-  //   }
-
-  //   return (
-  //     <div>
-  //       <UserHeader />
-  //       <h2>{blogDetail.title} by {blogDetail.author}</h2>
-  //       <div>
-  //         <a href={blogDetail.url}>{blogDetail.url}</a> <br />
-  //         {blogDetail.likes} <button onClick={handleLikeClick}>like</button><br />
-  //         added by {user.name}
-  //       </div>
-  //       {/* <BlogDetails /> */}
-  //     </div>
-  //   )
-  // }
+  const padding = {
+    padding: 4
+  }
 
   return (
     <Router>
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        {/* <Link style={padding} to="/blogs">blogs</Link> */}
+        <Link style={padding} to="/users">users</Link>
+        {user
+          ?
+          <span>
+            <em>{user.username} logged in</em>
+            <button onClick={logOut}>logout</button>
+          </span>
+          : <Link style={padding} to="/">login</Link>
+        }
+      </div>
+
       <Routes>
         <Route path="/users" element={<Users />} />
         <Route path="/" element={<Home />} />
         <Route path="/users/:id" element={<User blogs={blogs} />} />
         <Route path="/blogs/:id" element={<BlogDetailed blogs={blogs} user={user}/>}/>
+        {/* <Route path="/login" element={<LoginForm />} /> */}
       </Routes>
     </Router>
   )
