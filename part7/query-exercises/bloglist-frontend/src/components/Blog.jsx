@@ -5,11 +5,16 @@ import { updateBlog, deleteBlog } from '../requests'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useReducer, useContext } from 'react'
 import NotificationContext from '../NotificationContext'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const queryClient = useQueryClient()
+
+  // if (!blog) {
+  //   return <div>Blog not found! WERIRD</div>
+  // }
 
   const blogStyle = {
     paddingTop: 10,
@@ -88,13 +93,15 @@ const Blog = ({ blog }) => {
       <DeleteButton blog />
     </div>
   )
-
+  console.log('Blog', blog.id)
   return (
     <div style={blogStyle} className='blog' title='blog'>
-      <span className='blogTitle'>{blog.title}</span> <span className='blogAuthor'>{blog.author}</span>
-      <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
+      <Link to={`blogs/${blog.id}`}>
+        <span className='blogTitle'>{blog.title}</span> <span className='blogAuthor'>{blog.author}</span>
+      </Link>
+      {/* <Togglable buttonLabel="View" hideButton="hide" buttonTop="true">
         <BlogDetails />
-      </Togglable>
+      </Togglable> */}
     </div>
   )}
 

@@ -20,6 +20,10 @@ import {
   useNavigate,
   Navigate
 } from 'react-router-dom'
+import BlogDetails from './components/Blog'
+import { updateBlog, deleteBlog } from './requests'
+import BlogDetailed from './components/BlogDetailed'
+import UserHeader from './components/UserHeader'
 
 
 const App = () => {
@@ -27,8 +31,6 @@ const App = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const [user, userDispatch] = useContext(UserContext)
-
-  
 
   const { isLoading, data: blogs } = useQuery({
     queryKey: ['blogs'],
@@ -46,7 +48,7 @@ const App = () => {
   }, [userDispatch])
 
   if (isLoading) {
-    return <div>loading data...</div>;
+    return <div>loading data!...</div>;
   }
 
   const blogForm = () => (
@@ -93,23 +95,23 @@ const App = () => {
     )
   }
 
-  const UserHeader = () => {
-    return (
-      <div>
-        <h2>blogs</h2>
-        <div>
-          {user
-            ? (
-              <span>
-                {user.name} logged in <br/>
-                <p><button onClick={logOut}>logout</button></p>
-              </span>
-            )
-            : 'No user'}
-        </div>
-      </div>
-    )
-  }
+  // const UserHeader = () => {
+  //   return (
+  //     <div>
+  //       <h2>blogs</h2>
+  //       <div>
+  //         {user
+  //           ? (
+  //             <span>
+  //               {user.name} logged in <br/>
+  //               <p><button onClick={logOut}>logout</button></p>
+  //             </span>
+  //           )
+  //           : 'No user'}
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   const Users = () => {
     const { data: users } = useQuery({
@@ -122,7 +124,7 @@ const App = () => {
 
     return (
       <div>
-        <UserHeader />
+        <UserHeader user={user}/>
         <h2>Users</h2>
         <div>
           <span style={{ marginLeft: '120px', fontWeight: 'bold' }}>Blogs created:</span>
@@ -163,7 +165,7 @@ const App = () => {
 
     return (
       <div>
-        <UserHeader />
+        <UserHeader user={user}/>
         <h2>{blogUser.username}</h2>
         <h3>added blogs</h3>
         <div>
@@ -179,12 +181,68 @@ const App = () => {
     )
   }
 
+  // const BlogDetailed = ({ blog }) => {
+  //   // const { data: blogs } = useQuery({
+  //   //   queryKey: ['blogs'],
+  //   //   queryFn: getBlogs,
+  //   //   refetchOnWindowFocus: false
+  //   // });
+
+  //   // console.log('This is blogs', blogs)
+  //   // console.log('BLOG DETAILS', blogs)
+  //   const id = useParams().id
+  //   // const blogDetail = blogs.filter(blog => blog.id === id)[0]
+  //   const blogDetail = blogs.find(blog => blog.id === id)
+  //   console.log(blogDetail)
+  //   if (!blogDetail) {
+  //     return <div>blog not found in blog details!</div>
+  //   }
+
+  //   const updateBlogMutation = useMutation({
+  //     mutationFn: updateBlog,
+  //     onSuccess: (updatedBlog) => {
+  //       queryClient.setQueryData(['blogs'], (blogs) => {
+  //         return blogs.map((blog) =>
+  //           blog.id === updatedBlog.id ? updatedBlog : blog
+  //         )
+  //       })
+  //       notificationDispatch({ type: 'ADDLIKE', payload: { updatedBlog } })
+  //       setTimeout(() => {
+  //         notificationDispatch({ type: 'BLANK' })
+  //       }, 2000)
+  //     }
+  //   })
+
+  //   const handleLikeClick = async () => {
+  //     const updatedBlog = {
+  //       ...blog,
+  //       user: blog.user.id,
+  //       likes: blog.likes + 1
+  //     }
+  //     updateBlogMutation.mutate(updatedBlog)
+  //   }
+
+  //   return (
+  //     <div>
+  //       <UserHeader />
+  //       <h2>{blogDetail.title} by {blogDetail.author}</h2>
+  //       <div>
+  //         <a href={blogDetail.url}>{blogDetail.url}</a> <br />
+  //         {blogDetail.likes} <button onClick={handleLikeClick}>like</button><br />
+  //         added by {user.name}
+  //       </div>
+  //       {/* <BlogDetails /> */}
+  //     </div>
+  //   )
+  // }
+
   return (
     <Router>
       <Routes>
         <Route path="/users" element={<Users />} />
         <Route path="/" element={<Home />} />
         <Route path="/users/:id" element={<User blogs={blogs} />} />
+        <Route path="/blogs/:id" element={<BlogDetailed blogs={blogs} user={user}/>}/>
       </Routes>
     </Router>
   )
