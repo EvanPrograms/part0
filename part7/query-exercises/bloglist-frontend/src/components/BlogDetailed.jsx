@@ -8,12 +8,19 @@ import {
   Navigate
 } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { updateBlog, deleteBlog } from '../requests'
+import { updateBlog, deleteBlog, commentBlog } from '../requests'
 import UserHeader from './UserHeader'
 import { useReducer, useContext } from 'react'
 import NotificationContext from '../NotificationContext'
+import { useState } from 'react'
+import UserContext from '../UserContext'
+import blogService from '../services/blogs'
+import { useEffect } from 'react'
+
 
 const BlogDetailed = ({ blogs, user }) => {
+  const navigate = useNavigate()
+  // const [user, userDispatch] = useContext(UserContext)
   const queryClient = useQueryClient()
   const [notification, notificationDispatch] = useContext(NotificationContext)
 
@@ -49,6 +56,13 @@ const BlogDetailed = ({ blogs, user }) => {
     }
   })
 
+  const commentBlogMutation = useMutation({
+    mutationFn: blogService.createComment,
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries(['blogs']);
+    }
+  })
+
   const handleLikeClick = async () => {
     const updatedBlog = {
       ...blogDetail,
@@ -59,10 +73,34 @@ const BlogDetailed = ({ blogs, user }) => {
   }
 
   const Comments = ({ blog }) => {
-    console.log(blog.comments)
+    const [comment, setComment] = useState('')
+
+    const addComment = async (event) => {
+      event.preventDefault()
+      const token = user.token
+      const blogId = blog.id
+      const newComment = comment
+
+      console.log('addComment: token', token)
+      console.log('addComment: blogId', blogId)
+      console.log('addComment: newComment', newComment)
+      commentBlogMutation.mutate({ blogId, newComment })
+      setComment('')
+    }
     return (
       <div>
         <h3>comments</h3>
+        <form onSubmit={addComment}>
+          <input
+            type="text"
+            value={comment}
+            name="Title"
+            onChange={({ target }) => setComment(target.value)}
+            id='comment-input'
+            data-testid='comment'
+          />
+          <button type="submit">add comment</button>
+        </form>
         <ul>
           {blog.comments.map((comment, index) => (
             <li key={index}>{comment}</li>
@@ -72,6 +110,13 @@ const BlogDetailed = ({ blogs, user }) => {
     )
   }
 
+  // useEffect(() => {
+  //   // Redirect to home after logout
+  //   if (!user) {
+  //     navigate('/')
+  //   }
+  // }, [user, navigate])
+
   return (
     <div>
       <UserHeader user={user}/>
@@ -79,7 +124,7 @@ const BlogDetailed = ({ blogs, user }) => {
       <div>
         <a href={blogDetail.url}>{blogDetail.url}</a> <br />
         {blogDetail.likes} <button onClick={handleLikeClick}>like</button><br />
-        added by {user.name}
+        {user && <p>added by {user.name}</p>}
       </div>
       <Comments blog={blogDetail}/>
     </div>

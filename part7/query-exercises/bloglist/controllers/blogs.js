@@ -45,10 +45,6 @@ blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, resp
     return response.status(401).json({ error: 'please log in'})
   }
 
-  // if (!blog.comments) {
-  //   blog.comments = []
-  // }
-
   blog.comments.push(comment)
   const updatedBlog = await blog.save()
   console.log('updatedBlog', updatedBlog)
@@ -59,7 +55,6 @@ blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, resp
 blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   const body = request.body
   const user = request.user
-  // console.log('this is request', request)
   if (!user) {
     return response.status(401).json({ error: 'WE AINT GOTTA USER!' })
   }

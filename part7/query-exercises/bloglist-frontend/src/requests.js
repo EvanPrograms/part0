@@ -14,12 +14,20 @@ export const createBlog = async (newBlog, token) => {
   const config = {
     headers: { Authorization: token }
   }
-  const response = await axios.post(`${baseUrl}/blogs`, newBlog, config).then(response => response.data)
+  const response = await axios.post(`${baseUrl}/blogs`, newBlog, config)
   return response.data
 }
 
 export const updateBlog = async (updatedBlog) => {
   const response = await axios.put(`${baseUrl}/blogs/${updatedBlog.id}`, updatedBlog)
+  return response.data
+}
+
+export const commentBlog = async (blogId, comment, token) => {
+  const config = {
+    headers: { Authorization: token }
+  }
+  const response = await axios.post(`${baseUrl}/blogs/${blogId}/comments`, { comment: comment }, config)
   return response.data
 }
 
