@@ -20,6 +20,42 @@ blogsRouter.get('/:id', async (request, response) => {
   response.json(blog)
 })
 
+blogsRouter.get('/:id/comments', async (request, response) => {
+  const id = request.params.id
+
+  const blog = await Blog
+    .findById(id)
+    .populate('user', { username: 1, name: 1 })
+  response.json(blog)
+})
+
+blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response, next) => {
+  const { comment } = request.body
+  console.log('this is comment', comment)
+  const user = request.user
+  const id = request.params.id
+
+  const blog = await Blog.findById(id)
+
+  if (!blog) {
+    return response.status(400).json({ error: 'blog not found' })
+  }
+
+  if (!user) {
+    return response.status(401).json({ error: 'please log in'})
+  }
+
+  // if (!blog.comments) {
+  //   blog.comments = []
+  // }
+
+  blog.comments.push(comment)
+  const updatedBlog = await blog.save()
+  console.log('updatedBlog', updatedBlog)
+
+  response.status(201).json(updatedBlog)
+})
+
 blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   const body = request.body
   const user = request.user

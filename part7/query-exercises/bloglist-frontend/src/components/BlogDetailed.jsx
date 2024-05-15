@@ -58,6 +58,20 @@ const BlogDetailed = ({ blogs, user }) => {
     updateBlogMutation.mutate(updatedBlog)
   }
 
+  const Comments = ({ blog }) => {
+    console.log(blog.comments)
+    return (
+      <div>
+        <h3>comments</h3>
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
   return (
     <div>
       <UserHeader user={user}/>
@@ -67,7 +81,7 @@ const BlogDetailed = ({ blogs, user }) => {
         {blogDetail.likes} <button onClick={handleLikeClick}>like</button><br />
         added by {user.name}
       </div>
-      {/* <BlogDetails /> */}
+      <Comments blog={blogDetail}/>
     </div>
   )
 }
