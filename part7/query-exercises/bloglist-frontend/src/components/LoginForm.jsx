@@ -3,6 +3,7 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import UserContext from '../UserContext'
 import NotificationContext from '../NotificationContext'
+import { Table, Form, Button } from 'react-bootstrap'
 
 
 const LoginForm = () => {
@@ -52,31 +53,29 @@ const LoginForm = () => {
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
             type="text"
+            name="username"
             value={username}
-            name="Username"
-            data-testid='username'
             onChange={handleChangeUsername}
-            autoComplete="username"
           />
-        </div>
-        <div>
-          password
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password:</Form.Label>
+          <Form.Control
             type="password"
+            name="password"
             value={password}
-            name="Password"
-            data-testid='password'
             onChange={handleChangePassword}
-            autoComplete="current-password"
           />
-        </div>
-        <button type="submit">login</button>
-      </form>
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          login
+        </Button>
+      </Form>
     </div>
   )
 }

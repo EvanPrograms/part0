@@ -24,6 +24,7 @@ import BlogDetails from './components/Blog'
 import { updateBlog, deleteBlog } from './requests'
 import BlogDetailed from './components/BlogDetailed'
 import UserHeader from './components/UserHeader'
+import { Table, Nav, Navbar } from 'react-bootstrap'
 
 
 const App = () => {
@@ -63,18 +64,22 @@ const App = () => {
     }
     return (
       <div data-testid='parent'>
-        {/* <h2>blogs</h2>
-        <p>
-          {user.name} logged in <button onClick={logOut} type="submit">logout</button>
-        </p> */}
         <UserHeader />
         {blogForm()}
-        {blogs
-          .filter(blog => blog.user.username === user.username)
-          .sort(compareLikes)
-          .map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+        <Table striped>
+          <tbody>
+            {blogs
+              .filter(blog => blog.user.username === user.username)
+              .sort(compareLikes)
+              .map(blog =>
+                <tr key={blog.id}>
+                  <td>
+                    <Blog key={blog.id} blog={blog} />
+                  </td>
+                </tr>
+              )}
+          </tbody>
+        </Table>
       </div>
     )
   }
@@ -94,24 +99,6 @@ const App = () => {
       </div>
     )
   }
-
-  // const UserHeader = () => {
-  //   return (
-  //     <div>
-  //       <h2>blogs</h2>
-  //       <div>
-  //         {user
-  //           ? (
-  //             <span>
-  //               {user.name} logged in <br/>
-  //               <p><button onClick={logOut}>logout</button></p>
-  //             </span>
-  //           )
-  //           : 'No user'}
-  //       </div>
-  //     </div>
-  //   )
-  // }
 
   const Users = () => {
     const { data: users } = useQuery({
@@ -135,7 +122,7 @@ const App = () => {
                   <span
                     style={{
                       position: 'absolute',
-                      left: '130px', // Adjust this value to position the blog count 100 pixels from the left
+                      left: '300px', // Adjust this value to position the blog count 100 pixels from the left
                       textAlign: 'center'
                     }}>
                     {user.blogs.length}
@@ -186,28 +173,53 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        {user
-          ?
-          <span>
-            <em>{user.username} logged in</em>
-            <button onClick={logOut}>logout</button>
-          </span>
-          : <Link style={padding} to="/">login</Link>
-        }
-      </div>
+    <div className="container">
+      <Router>
+        <div>
+          {/* <Link style={padding} to="/">blogs</Link>
+          <Link style={padding} to="/users">users</Link>
+          {user
+            ?
+            <span>
+              <em>{user.username} logged in</em>
+              <button onClick={logOut}>logout</button>
+            </span>
+            : <Link style={padding} to="/">login</Link>
+          } */}
+          <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+              <Nav className="me-auto">
+                <Nav.Link href="#" as="span">
+                  <Link style={padding} to="/">blogs</Link>
+                </Nav.Link>
+                <Nav.Link href="#" as="span">
+                  <Link style={padding} to="/users">users</Link>
+                </Nav.Link>
+                <Nav.Link href="#" as="span">
+                  {user
+                    ?
+                    <span>
+                      <em style={padding}>{user.username} logged in</em>
+                      <button onClick={logOut}>logout</button>
+                    </span>
+                    : <Link style={padding} to="/">login</Link>
+                  }
+                </Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Navbar>
+        </div>
 
-      <Routes>
-        <Route path="/users" element={<Users />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/users/:id" element={<User blogs={blogs} />} />
-        <Route path="/blogs/:id" element={<BlogDetailed blogs={blogs} user={user}/>}/>
-        {/* <Route path="/login" element={<LoginForm />} /> */}
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="/users" element={<Users />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/users/:id" element={<User blogs={blogs} />} />
+          <Route path="/blogs/:id" element={<BlogDetailed blogs={blogs} user={user}/>}/>
+          {/* <Route path="/login" element={<LoginForm />} /> */}
+        </Routes>
+      </Router>
+    </div>
   )
 }
 
