@@ -157,6 +157,7 @@ const resolvers = {
         const authorbooks = books.filter(book => book.author === author.name)
         return {
           name: author.name,
+          born: author.born,
           bookCount: authorbooks.length
         }
       })
