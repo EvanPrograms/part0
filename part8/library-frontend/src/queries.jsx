@@ -17,3 +17,12 @@ query {
     published
   }
 }`
+
+export const EDIT_BIRTH = gql`
+mutation editAuthor($name: String!, $born: Int!) {
+  editAuthor(name: $name, setBornTo: $born) {
+    name
+    born
+  }
+}
+`
