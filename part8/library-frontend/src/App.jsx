@@ -9,15 +9,22 @@ import {
   Link
 } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
-import { ALL_AUTHORS } from "./queries";
+import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
+
 
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const result = useQuery(ALL_AUTHORS)
+  const booksResult = useQuery(ALL_BOOKS)
   console.log('this is result', result.data)
+  console.log('this is booksResult', booksResult)
 
   if (result.loading) {
+    return <div>Loading...</div>
+  }
+
+  if (booksResult.loading) {
     return <div>Loading...</div>
   }
   
@@ -36,8 +43,8 @@ const App = () => {
       </div>
         
       <Routes>
-        <Route path="/" element={<Authors data={result.data.allAuthors}show={page === "authors"}/>} />
-        <Route path="/books" element={<Books show={page === "books"}/>} />
+        <Route path="/" element={<Authors data={result.data.allAuthors} show={page === "authors"}/>} />
+        <Route path="/books" element={<Books data={booksResult.data.allBooks} show={page === "books"}/>} />
         <Route path="/add" element={<NewBook show={page === "add"}/>} />
       </Routes>
   
