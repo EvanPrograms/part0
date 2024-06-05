@@ -135,7 +135,7 @@ const typeDefs = `
     dummy: Int
     bookCount: Int
     authorCount: Int
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks(author: String, published: Int, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
 
@@ -218,15 +218,21 @@ const resolvers = {
       // return book.save()
       
     },
-    editAuthor: (roots, args) => {
-      const author = authors.find(author => author.name === args.name)
-      if (!author) {
-        return null
-      }
+    editAuthor: async (roots, args) => {
+      try {
+        const author = await Author.findOne({ name: args.name })
 
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
-      return updatedAuthor
+        if (!author) {
+          throw new Error('Author not found')
+        }
+
+        author.born = args.setBornTo
+        await author.save()
+
+        return author
+      } catch (error) {
+        throw new Error('Failed to edit author')
+      }
     }
   }
 }
