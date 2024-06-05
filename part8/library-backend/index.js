@@ -1,4 +1,4 @@
-const { ApolloServer } = require('@apollo/server')
+const { ApolloServer, GraphQLError } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
 
@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book')
+const { GraphQLBoolean } = require('graphql')
 
 require('dotenv').config()
 
@@ -188,6 +189,25 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args) => {
       try {
+        if (args.title.length < 3) {
+          throw new GraphQLError('Title is too short', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title
+            }
+          })
+        }
+
+        if (args.author.name.length < 3) {
+          throw new GraphQLError('Author name is too short', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author.name
+            }
+          })
+        }
+
+
         let author = await Author.findOne({ name: args.author })
 
         if (!author) {
@@ -207,7 +227,13 @@ const resolvers = {
         const savedBook = await book.save()
         return savedBook
       } catch (error) {
-        throw new Error('Failed to add book')
+        throw new GraphQLError('Failed to add book', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
       }
       // let author = authors.find(author => author.name === args.author)
 
@@ -223,7 +249,13 @@ const resolvers = {
         const author = await Author.findOne({ name: args.name })
 
         if (!author) {
-          throw new Error('Author not found')
+          throw new GraphQLError('Author not found', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
         }
 
         author.born = args.setBornTo
@@ -231,7 +263,13 @@ const resolvers = {
 
         return author
       } catch (error) {
-        throw new Error('Failed to edit author')
+        throw new GraphQLError('Failed to edit author', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
       }
     }
   }
