@@ -127,10 +127,12 @@ const typeDefs = `
     author: Author!
     published: Int!
     genres: [String!]!
+    id: ID!
   }
 
   type Author {
     name: String!
+    id: ID!
     born: Int
     bookCount: Int!
   }
@@ -268,45 +270,62 @@ const resolvers = {
   //   }
   // },
   Mutation: {
-    addBook: async (root, args) => {
-      try {
-        if (args.title.length < 3) {
-          throw new GraphQLError('Title is too short', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.title
-            }
-          })
-        }
+    addBook: async (root, args, context) => {
+      console.log('addbook resolver', args.title, args.author, args.genres, args.published)
+      const currentUser = context.currentUser
 
-        if (args.author.name.length < 3) {
-          throw new GraphQLError('Author name is too short', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.author.name
-            }
-          })
-        }
-
-
-        let author = await Author.findOne({ name: args.author })
-
-        if (!author) {
-          // author = { name: args.author, id: uuid() }
-          author = new Author({ name: args.author })
-          // authors = authors.concat(author)
-          await author.save()
-        }
-
-        const book = new Book({
-          title: args.title,
-          author: author._id, // Use the author's ObjectId
-          published: args.published,
-          genres: args.genres
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
         })
+      }
 
-        const savedBook = await book.save()
-        return savedBook
+      
+      if (args.title.length < 3) {
+        throw new GraphQLError('Title is too short', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title
+          }
+        })
+      }
+
+      if (args.author.length < 3) {
+        throw new GraphQLError('Author name is too short', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.author.name
+          }
+        })
+      }
+
+      let author = await Author.findOne({ name: args.author })
+
+      if (!author) {
+          // author = { name: args.author, id: uuid() }
+        author = new Author({ name: args.author })
+          // authors = authors.concat(author)
+        
+        await author.save()
+      }
+
+      // console.log('this is backend author ID', author._id)
+
+      // const book = new Book({
+      //   title: args.title,
+      //   author: author._id, // Use the author's ObjectId
+      //   published: args.published,
+      //   genres: args.genres
+      // })
+      // // console.log('this is backend savedbook', savedBook)
+      // const savedBook = await book.save()
+      // return savedBook
+      try {
+        const book = await Book.create({ ...args, author: author._id })
+        const populatedBook = await book.populate('author')
+        return populatedBook
       } catch (error) {
         throw new GraphQLError('Failed to add book', {
           extensions: {
