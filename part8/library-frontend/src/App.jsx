@@ -3,6 +3,7 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm"
+import Recommendations from "./components/Recommendations"
 import {
   BrowserRouter as Router,
   Routes,
@@ -32,8 +33,11 @@ const App = () => {
     return <div>Loading...</div>
   }
   
+  
   const logout = () => {
     setToken(null)
+    const user = JSON.parse(localStorage.getItem('user'))
+    console.log('logging out', user)
     localStorage.clear()
     client.resetStore()
   }
@@ -51,6 +55,7 @@ const App = () => {
         { token ? (
           <>
             <Link style={padding} to="/add" onClick={() => setPage("add")}>add book!</Link>
+            <Link style={padding} to="/recommendations" onClick={() => setPage("recommendations")}>recommendations</Link>
             <Link style={padding} to="/" onClick={logout}>logout</Link>
           </>
         ) : (
@@ -65,6 +70,7 @@ const App = () => {
         <Route path="/books" element={<Books data={booksResult.data.allBooks} show={page === "books"}/>} />
         <Route path="/add" element={<NewBook show={page === "add"}/>} />
         <Route path="/login" element={<LoginForm setToken={setToken}/>} />
+        <Route path="/recommendations" element={<Recommendations show={page === 'recommendations'}/>}/>
       </Routes>
   
       {/* <Authors show={page === "authors"} />

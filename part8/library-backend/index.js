@@ -239,8 +239,29 @@ const resolvers = {
       // })
       return Author.find({})
     },
-    me: (root, args, context) => {
-      return context.currentUser
+    me: async (root, args, context) => {
+      // return context.currentUser
+      const currentUser = context.currentUser
+    
+      if(!currentUser) {
+        throw new GraphQLError('ME: User not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
+
+      const userWithFavoriteGenre = await User.findById(currentUser._id)
+
+      if (!userWithFavoriteGenre) {
+        throw new GraphQLError('ME: User not found', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
+
+      return userWithFavoriteGenre
     }
   },
   Author: {

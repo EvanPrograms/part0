@@ -16,7 +16,8 @@ query {
     author {
       name
     },
-    published
+    published,
+    genres
   }
 }`
 
@@ -35,4 +36,24 @@ mutation login($username: String!, $password: String!) {
     value
     }
   }
+`
+export const GET_BOOKS_BY_GENRE = gql`
+query GetBooksByGenre($genre: String!) {
+  allBooks(genre: $genre) {
+    title
+    author {
+      name
+    }
+    published
+  }
+}
+`
+
+export const GET_ME = gql`
+query {
+  me {
+  username
+  favoriteGenre
+  }
+}
 `
