@@ -1,6 +1,5 @@
-import React from 'react'
 import { GET_ME, GET_BOOKS_BY_GENRE } from '../queries';
-import { gql, useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useApolloClient } from '@apollo/client'
 import Books from './Books';
 import { useState, useEffect } from 'react'
 
@@ -9,8 +8,6 @@ const Recommendations = (props) => {
   const [favoriteGenre, setFavoriteGenre] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  // const result = useQuery(GET_ME)
-  // console.log('recommendations', result)
   const { loading: booksLoading, error: booksError, data: booksData, refetch } = useQuery(GET_BOOKS_BY_GENRE, {
     variables: { genre: favoriteGenre }, // Pass selectedGenre as a variable
     skip: !favoriteGenre
@@ -49,5 +46,3 @@ const Recommendations = (props) => {
 }
 
 export default Recommendations
-
-// {result.data.me.favoriteGenre}

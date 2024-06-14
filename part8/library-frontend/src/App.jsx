@@ -13,33 +13,14 @@ import {
 } from 'react-router-dom'
 
 import { 
-  gql,
   useQuery,
   useApolloClient,
-  useMutation,
   useSubscription
 } from '@apollo/client'
+
 import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries";
 
-// export const updateCache = (cache, query, addedBook) => {
-//   const uniqByTitle = (a) => {
-//     const seen = new Set();
-//     return a.filter(item => {
-//       const isDuplicate = seen.has(item.title);
-//       seen.add(item.title);
-//       return !isDuplicate;
-//     });
-//   };
-
-//   cache.updateQuery(query, ({ allBooks }) => {
-//     return {
-//       allBooks: uniqByTitle(allBooks.concat(addedBook)),
-//     }
-//   })
-// }
-
 export const updateCache = (cache, query, addedBook) => {
-  // helper that is used to eliminate saving same person twice
   const uniqByTitle = (a) => {
     let seen = new Set()
     return a.filter((item) => {
@@ -73,12 +54,6 @@ const App = () => {
       console.log('use subscription', data)
 
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
-      // client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-      //   return {
-      //     allBooks: allBooks.concat(addedBook)
-      //   }
-      // })
-
     },
     onError: (error) => {
       console.error('Subscription error: ', error)
@@ -109,9 +84,6 @@ const App = () => {
   return (
     <Router>
       <div>
-        {/* <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button> */}
         <Link style={padding} to="/" onClick={() => setPage("authors")}>authors</Link>
         <Link style={padding} to="/books" onClick={() => setPage("books")}>books</Link>
         { token ? (
@@ -123,8 +95,6 @@ const App = () => {
         ) : (
           <Link style={padding} to="/login" onClick={() => setPage("login")}>login</Link>
         )}
-        {/* <Link style={padding} to="/add" onClick={() => setPage("add")}>add book!</Link>
-        <Link style={padding} to="/login" onClick={() => setPage("login")}>login</Link> */}
       </div>
         
       <Routes>
@@ -134,23 +104,8 @@ const App = () => {
         <Route path="/login" element={<LoginForm setToken={setToken}/>} />
         <Route path="/recommendations" element={<Recommendations show={page === 'recommendations'}/>}/>
       </Routes>
-  
-      {/* <Authors show={page === "authors"} />
-
-      <Books show={page === "books"} />
-
-      <NewBook show={page === "add"} /> */}
     </Router>
   );
 };
 
 export default App;
-
-// {user
-//   ?
-//   <span>
-//     <em style={padding}>{user.username} logged in</em>
-//     <button onClick={logOut}>logout</button>
-//   </span>
-//   : <Link style={padding} to="/">login</Link>
-// }

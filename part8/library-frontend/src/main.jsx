@@ -52,11 +52,6 @@ const client = new ApolloClient({
   link: splitLink
 })
 
-// client.query({ query: ALL_AUTHORS })
-//   .then((response) => {
-//     console.log(response.data)
-//   })
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
     <App />

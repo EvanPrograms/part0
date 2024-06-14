@@ -16,35 +16,11 @@ const Books = (props) => {
     return null
   }
 
-  // let books = props.data
-  // console.log('books!', data)
   const uniqueGenres = []
 
-  // if (data && data.booksByGenre) {
-  //   books = data.booksByGenre
-  // }
-  // if (!loading && !error && data) {
-  //   books = data.booksByGenre;
-  // }
-
-  // if (props.data) {
-  //   uniqueGenres.push(...new Set(props.data.flatMap(book => book.genres)))
-  // }
   if (Array.isArray(props.data)) {
     uniqueGenres.push(...new Set(props.data.flatMap(book => book.genres)))
     console.log('uniquegenres', uniqueGenres)
-  }
-
-  // if (!loading && !error && data) {
-  //   books = data.booksByGenre
-  // }
-
-  // const uniqueGenres = [...new Set(books.flatMap(book => book.genres))];
-
-  const genreSelection = async (genre) => {
-    console.log('Selected genre:', genre)
-    setSelectedGenre(genre)
-    // refetch({ genre: genre })
   }
 
   const fetchDataByGenre = async (genre) => {

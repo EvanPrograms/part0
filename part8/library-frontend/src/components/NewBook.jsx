@@ -22,14 +22,6 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
 }
 `
 
-// Mutation {
-//   addBook(
-//     title: String!
-//     author: String!
-//     published: Int
-//     genres: [String!]!
-//   ): Book
-
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -38,7 +30,6 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
-    // refetchQueries: [ { query: ALL_AUTHORS }, { query: ALL_BOOKS }]
     update: (cache, response) => {
       updateCache(cache, { query: ALL_BOOKS }, response.data.addBook)
     }

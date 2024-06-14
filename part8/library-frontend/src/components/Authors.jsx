@@ -21,7 +21,6 @@ const BirthForm = (props) => {
     event.preventDefault()
     console.log('sumbmiss')
     editAuthor({ variables: { name: selectedOption.value, born } })
-    // setName('')
     setBorn('')
   }
 
@@ -29,17 +28,9 @@ const BirthForm = (props) => {
     <div>
     <h3>Set Birthyear</h3>
     <form onSubmit={submit}>
-      {/* <div>
-        name
-        <input
-          value={name}
-          onChange={({ target }) => setName(target.value)}
-        />
-      </div> */}
       <div>
       <Select
         defaultValue={selectedOption}
-        // value={selectedOption}
         onChange={setSelectedOption}
         options={options}
       />
@@ -62,7 +53,6 @@ const Authors = (props) => {
     return null
   }
   const authors = props.data
-  // console.log('this is authors', authors)
 
   return (
     <div>
