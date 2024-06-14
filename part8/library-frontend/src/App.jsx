@@ -4,15 +4,38 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm"
 import Recommendations from "./components/Recommendations"
+
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link
 } from 'react-router-dom'
-import { gql, useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
 
+import { 
+  gql,
+  useQuery,
+  useApolloClient,
+  useMutation,
+  useSubscription
+} from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries";
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqByName = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.uniqByName
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByName(allBooks.concat(addedBook)),
+    }
+  })
+}
 
 
 const App = () => {
@@ -25,6 +48,20 @@ const App = () => {
   console.log('this is result', result.data)
   console.log('this is booksResult', booksResult.data)
 
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded
+      window.alert(`Book added: ${addedBook.title}`)
+      console.log('use subscription', data)
+
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+
+    },
+    onError: (error) => {
+      console.error('Subscription error: ', error)
+    }
+  })
+
   if (result.loading) {
     return <div>Loading...</div>
   }
@@ -32,6 +69,8 @@ const App = () => {
   if (booksResult.loading) {
     return <div>Loading...</div>
   }
+
+  
   
   
   const logout = () => {

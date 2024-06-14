@@ -57,3 +57,23 @@ query {
   }
 }
 `
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title,
+    author {
+      name
+    },
+    published,
+    genres
+  }
+`
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`
