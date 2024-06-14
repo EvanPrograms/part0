@@ -21,18 +21,36 @@ import {
 } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries";
 
+// export const updateCache = (cache, query, addedBook) => {
+//   const uniqByTitle = (a) => {
+//     const seen = new Set();
+//     return a.filter(item => {
+//       const isDuplicate = seen.has(item.title);
+//       seen.add(item.title);
+//       return !isDuplicate;
+//     });
+//   };
+
+//   cache.updateQuery(query, ({ allBooks }) => {
+//     return {
+//       allBooks: uniqByTitle(allBooks.concat(addedBook)),
+//     }
+//   })
+// }
+
 export const updateCache = (cache, query, addedBook) => {
-  const uniqByName = (a) => {
+  // helper that is used to eliminate saving same person twice
+  const uniqByTitle = (a) => {
     let seen = new Set()
     return a.filter((item) => {
-      let k = item.uniqByName
+      let k = item.title
       return seen.has(k) ? false : seen.add(k)
     })
   }
 
   cache.updateQuery(query, ({ allBooks }) => {
     return {
-      allBooks: uniqByName(allBooks.concat(addedBook)),
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
     }
   })
 }
@@ -55,6 +73,11 @@ const App = () => {
       console.log('use subscription', data)
 
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+      // client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+      //   return {
+      //     allBooks: allBooks.concat(addedBook)
+      //   }
+      // })
 
     },
     onError: (error) => {
