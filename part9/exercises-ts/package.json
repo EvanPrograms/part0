@@ -1,0 +1,11 @@
+{
+  "name": "exercises-ts",
+  "version": "1.0.0",
+  "description": "exercises for typescript",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node"
+  },
+  "author": "",
+  "license": "ISC"
+}
