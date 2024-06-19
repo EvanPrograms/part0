@@ -56,20 +56,22 @@ const calculateBmi = (height: number, weight: number, printText: string) : strin
   return answer
 }
 
-const height: number = Number(process.argv[2])
-const weight: number = Number(process.argv[3])
+// const height: number = Number(process.argv[2])
+// const weight: number = Number(process.argv[3])
 
 
-try {
-  const { value1, value2 } = parseArguments(process.argv);
-  calculateBmi(
-    value1,
-    value2,
-    `The BMI of height: ${height}cm and ${weight}kg is: `)
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened. '
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage)
-}
+// try {
+//   const { value1, value2 } = parseArguments(process.argv);
+//   calculateBmi(
+//     value1,
+//     value2,
+//     `The BMI of height: ${height}cm and ${weight}kg is: `)
+// } catch (error: unknown) {
+//   let errorMessage = 'Something bad happened. '
+//   if (error instanceof Error) {
+//     errorMessage += ' Error: ' + error.message;
+//   }
+//   console.log(errorMessage)
+// }
+
+export { parseArguments, calculateBmi }
