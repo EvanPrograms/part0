@@ -11,11 +11,11 @@ const parseArguments = (args: string[]): BmiValues => {
     return {
       value1: Number(args[2]),
       value2: Number(args[3])
-    }
+    };
   } else {
-    throw new Error('Provided values were not numbers!')
+    throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 const calculateBmi = (height: number, weight: number, printText: string) : string => {
   const bmi = weight / ((height / 100) * (height / 100));
@@ -36,7 +36,7 @@ const calculateBmi = (height: number, weight: number, printText: string) : strin
       answer = 'Normal Range';
       break;
     case (25 <= bmi && bmi < 30):
-      answer = 'Overweight (Pre-obese)'
+      answer = 'Overweight (Pre-obese)';
       break;
     case (30 <= bmi && bmi < 35):
       answer = 'Obese (Class I)';
@@ -48,13 +48,13 @@ const calculateBmi = (height: number, weight: number, printText: string) : strin
       answer = 'Obese (Class III Very severely obese)';
       break;
     default:
-      answer = 'Invalid BMI'
+      answer = 'Invalid BMI';
   }
 
   // return answer
-  console.log(printText, answer)
-  return answer
-}
+  console.log(printText, answer);
+  return answer;
+};
 
 // const height: number = Number(process.argv[2])
 // const weight: number = Number(process.argv[3])
@@ -74,4 +74,4 @@ const calculateBmi = (height: number, weight: number, printText: string) : strin
 //   console.log(errorMessage)
 // }
 
-export { parseArguments, calculateBmi }
+export { parseArguments, calculateBmi };
