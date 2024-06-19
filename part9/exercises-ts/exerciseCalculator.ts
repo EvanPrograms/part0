@@ -1,20 +1,3 @@
-// interface Result {
-//   value1: number[];
-//   value2: number;
-// }
-
-// const parseArguments = (args: string[]): Result => {}
-//   if (parseArguments.length < 4) throw new Error('Not enough arguments')
-//   if (parseArguments.length > 4) throw new Error('Too many arguments')
-
-//     if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-//       return {
-//         value: Number(args[2]),
-//         value2: Number(args[3])
-//       }
-//     } else {
-//       throw new Error('Provided values were not correct!')
-//     }
 
 interface ExerciseResult {
   numberDays: number;
@@ -24,6 +7,29 @@ interface ExerciseResult {
   targetReached: boolean;
   rating: number;
   ratingExplanation: string; 
+}
+
+const parseArguments = (args: string[]): { target: number, hours: number[] } => {
+  if (args.length < 3) throw new Error('Not enough arugments')
+
+  const startIndex = args[0] === '--' ? 1 : 0
+  const target = Number(args[startIndex]);
+  if (isNaN(target)) {
+    throw new Error('Provided target value is not a number');
+  }
+
+  const hours = args.slice(startIndex + 1).map(arg => {
+    const num = Number(arg);
+    if(isNaN(num)) {
+      throw new Error(`Provided value ${arg} is not a number!`)
+    }
+    return num;
+  });
+
+  return {
+    target,
+    hours
+  };
 }
   
 
@@ -51,7 +57,7 @@ const calculateExercises = (hours: number[], target: number) : ExerciseResult =>
       ratingExplanation = 'You worked out 1x as much as target';
   }
   
-  return{
+  return {
     numberDays,
     trainingDays,
     averageDailyHours,
@@ -62,4 +68,16 @@ const calculateExercises = (hours: number[], target: number) : ExerciseResult =>
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+const args = process.argv.slice(2);
+
+try {
+  const { target, hours } = parseArguments(args);
+  const result = calculateExercises(hours, target);
+  console.log(result);
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened. '
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage)
+}
