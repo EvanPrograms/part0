@@ -1,4 +1,3 @@
-
 interface ExerciseResult {
   numberDays: number;
   trainingDays: number;
@@ -9,7 +8,7 @@ interface ExerciseResult {
   ratingExplanation: string; 
 }
 
-const parseArguments = (args: string[]): { target: number, hours: number[] } => {
+export const parseArguments = (args: string[]): { target: number, hours: number[] } => {
   if (args.length < 3) throw new Error('Not enough arugments');
 
   const startIndex = args[0] === '--' ? 1 : 0;
@@ -33,7 +32,7 @@ const parseArguments = (args: string[]): { target: number, hours: number[] } => 
 };
   
 
-const calculateExercises = (hours: number[], target: number) : ExerciseResult => {
+export const calculateExercises = (hours: number[], target: number) : ExerciseResult => {
   const numberDays = hours.length;
   const trainingDays = hours.filter(day => day!== 0).length;
   //target
@@ -68,16 +67,16 @@ const calculateExercises = (hours: number[], target: number) : ExerciseResult =>
   };
 };
 
-const args = process.argv.slice(2);
+// const args = process.argv.slice(2);
 
-try {
-  const { target, hours } = parseArguments(args);
-  const result = calculateExercises(hours, target);
-  console.log(result);
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened. ';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
-}
+// try {
+//   const { target, hours } = parseArguments(args);
+//   const result = calculateExercises(hours, target);
+//   console.log(result);
+// } catch (error: unknown) {
+//   let errorMessage = 'Something bad happened. ';
+//   if (error instanceof Error) {
+//     errorMessage += ' Error: ' + error.message;
+//   }
+//   console.log(errorMessage);
+// }
