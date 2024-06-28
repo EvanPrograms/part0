@@ -50,7 +50,6 @@ app.post('/exercises', (req, res) => {
   const hours: number[] = daily_exercises.map((hour: number) => Number(hour));
 
   const result = calculateExercises(hours, Number(target));
-  // return res.json(result);
   return res.json(result)
 })
 
