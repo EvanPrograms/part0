@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface Diary {
   id: number,
@@ -15,6 +15,7 @@ const App = () => {
   const [visibility, setVisibility] = useState('');
   const [weather, setWeather] = useState('');
   const [comment, setComment] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     axios.get<Diary[]>('http://localhost:3000/api/diaries').then(response => {
@@ -22,7 +23,7 @@ const App = () => {
     })
   }, [])
 
-  const diaryCreation = (event: React.SyntheticEvent) => {
+  const diaryCreation = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     const newDiary = {
       date,
@@ -30,10 +31,29 @@ const App = () => {
       weather,
       comment
     }
-    axios.post<Diary>('http://localhost:3000/api/diaries', newDiary)
-      .then(response => {
+    // axios.post<Diary>('http://localhost:3000/api/diaries', newDiary)
+    //   .then(response => {
+    //     setDiaries(diaries.concat(response.data))
+    //   })
+
+      try {
+        const response = await axios.post('http://localhost:3000/api/diaries', newDiary);
         setDiaries(diaries.concat(response.data))
-      })
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            setError(error.response.data)
+          } else {
+            setError(error.message)
+          }
+        } else {
+          setError('An unexpected error occurred');
+        }
+
+        setTimeout(() => {
+          setError('')
+        }, 5000)
+      }
 
       setDate('');
       setVisibility('');
@@ -44,6 +64,7 @@ const App = () => {
   return (
     <div>
       <h3>Add new entry</h3>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={diaryCreation}>
         <div>
           <label>Date: </label>
