@@ -9,8 +9,12 @@ interface Diary {
 }
 
 const App = () => {
-  const [newNote, setNewNote] = useState('');
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [newDiary, setNewDiary] = useState('')
+  const [date, setDate] = useState('');
+  const [visibility, setVisibility] = useState('');
+  const [weather, setWeather] = useState('');
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     axios.get<Diary[]>('http://localhost:3000/api/diaries').then(response => {
@@ -18,8 +22,47 @@ const App = () => {
     })
   }, [])
 
+  const diaryCreation = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    const newDiary = {
+      date,
+      visibility,
+      weather,
+      comment
+    }
+    axios.post<Diary>('http://localhost:3000/api/diaries', newDiary)
+      .then(response => {
+        setDiaries(diaries.concat(response.data))
+      })
+
+      setDate('');
+      setVisibility('');
+      setWeather('');
+      setComment('');
+  };
+
   return (
     <div>
+      <h3>Add new entry</h3>
+      <form onSubmit={diaryCreation}>
+        <div>
+          <label>Date: </label>
+          <input value={date} onChange={(event) => setDate(event.target.value)} />
+        </div>
+        <div>
+          <label>Weather: </label>
+          <input value={weather} onChange={(event) => setWeather(event.target.value)} />
+        </div>
+        <div>
+          <label>Visibility: </label>
+          <input value={visibility} onChange={(event) => setVisibility(event.target.value)} />
+        </div>
+        <div>
+          <label>Comment: </label>
+          <input value={comment} onChange={(event) => setComment(event.target.value)} />
+        </div>
+        <button>add</button>
+      </form>
       <h3>Diary entries</h3>
       <ul>
       {diaries.map(diary =>
