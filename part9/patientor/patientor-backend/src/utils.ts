@@ -1,5 +1,5 @@
 // import { parse } from 'uuid';
-import { NewPatientEntry, Gender } from './types';
+import { NewPatientEntry, Gender, Entry } from './types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -51,6 +51,18 @@ const parseDateOfBirth = (date: unknown): string => {
   return date;
 };
 
+const isEntry = (entry: unknown): entry is Entry => {
+  return typeof entry === 'object' && entry !== null;
+};
+
+const parseEntries = (entries: unknown): Entry[] => {
+  if (!Array.isArray(entries) || !entries.every(isEntry)) {
+    throw new Error('Incorrect or missing entries');
+  }
+
+  return entries as Entry[];
+};
+
 const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   if ( !object || typeof object !== 'object' ) {
     throw new Error('Incorrect or missing data');
@@ -62,7 +74,8 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
       dateOfBirth: parseDateOfBirth(object.dateOfBirth),
       ssn: parseSsn(object.ssn),
       gender: parseGender(object.gender),
-      occupation: parseOccupation(object.occupation)
+      occupation: parseOccupation(object.occupation),
+      entries: 'entries' in object ? parseEntries(object.entries) : []
     };
 
     return newEntry;
