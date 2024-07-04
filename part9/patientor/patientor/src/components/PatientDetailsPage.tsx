@@ -6,6 +6,7 @@ import { apiBaseUrl } from "../constants";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import './PatientDetailsPage.css';
 
 
 
@@ -27,6 +28,7 @@ const PatientDetailsPage = () => {
   }, [id]);
 
   if (!patient) return <div>Loading...</div>;
+  console.log('patient entries', patient.entries);
 
   return (
     <div>
@@ -36,19 +38,28 @@ const PatientDetailsPage = () => {
         {patient.gender === 'other' && <TransgenderIcon />}
       </h2>
 
-      <p>Occupation: {patient.occupation}</p>
-      <p>Date of Birth: {patient.dateOfBirth}</p>
-      <p>SSN: {patient.ssn}</p>
+      <p className="no-margin">Occupation: {patient.occupation}</p>
+      <p className="no-margin">Date of Birth: {patient.dateOfBirth}</p>
+      <p className="no-margin">SSN: {patient.ssn}</p>
       <h3>Entries</h3>
-      {/* {patient.entries.length > 0 ? (
+      {patient.entries.length > 0 ? (
         patient.entries.map((entry, index) => (
           <div key={index}>
-            <p>{entry}</p>
+            <p>{entry.date} <em>{entry.description}</em></p>
+            <ul>
+            {entry.diagnosisCodes && (
+              <ul>
+                {entry.diagnosisCodes.map((code, index) => (
+                    <li key={index}>{code}</li>
+                ))}
+              </ul>
+            )}
+            </ul>
           </div>
         ))
       ) : (
         <p>No entries</p>
-      )} */}
+      )}
     </div>
   );
 };
