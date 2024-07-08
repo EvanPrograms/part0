@@ -68,3 +68,11 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export type EntryFormValues = Omit<BaseEntry, "id"> & {
+  type: "HealthCheck" | "Hospital" | "OccupationalHealthcare";
+  healthCheckRating?: HealthCheckRating;
+  discharge?: Discharge;
+  employerName?: string;
+  sickLeave?: sickLeave;
+};

@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Diagnosis, Patient, OccupationalHealthcareEntry, HospitalEntry, HealthCheckEntry, Entry } from "../types";
+import { Diagnosis, Patient, OccupationalHealthcareEntry, HospitalEntry, HealthCheckEntry, Entry, EntryFormValues } from "../types";
 import { apiBaseUrl } from "../constants";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import WorkIcon from '@mui/icons-material/Work';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { HospitalEntryDetails, OccupationalHealthcareEntryDetails, HealthCheckEntryDetails} from './entries';
-
 import './PatientDetailsPage.css';
-
-
+import AddEntry from "./AddEntry";
+import patientService from '../services/patients';
 
 
 const PatientDetailsPage = () => {
@@ -22,6 +17,8 @@ const PatientDetailsPage = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
 
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [error, setError] = useState<string>();
+
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -65,7 +62,31 @@ const PatientDetailsPage = () => {
       default:
         return assertNever(entry);
     }
-  }
+  };
+
+  const submitNewEntry = async (entry: EntryFormValues) => {
+
+    if (!patient) return;
+
+    try {
+      const newEntry = await patientService.createEntry(patient.id, entry);
+      setPatient({ ...patient, entries: [...patient.entries, newEntry ]});
+      setError(undefined);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
 
   return (
     <div>
@@ -78,7 +99,15 @@ const PatientDetailsPage = () => {
       <p className="no-margin">Occupation: {patient.occupation}</p>
       <p className="no-margin">Date of Birth: {patient.dateOfBirth}</p>
       <p className="no-margin">SSN: {patient.ssn}</p>
+      < br/>
+      <div>
+        {error && <div style={{ color: 'red' }}>{error}</div>}
+        <AddEntry onSubmit={submitNewEntry} onCancel={() => {}} />
+      </div>
+      <br />
+      <br />
       <h3>Entries</h3>
+    
       {patient.entries.length > 0 ? (
         patient.entries.map((entry) => (
           <div key={entry.id} className="entry-box">
