@@ -40,15 +40,15 @@ export interface HospitalEntry extends BaseEntry {
   discharge: Discharge;
 }
 
-interface sickLeave {
-  startdate: string;
+interface SickLeave {
+  startDate: string;
   endDate: string;
 }
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
-  sickLeave: sickLeave;
+  sickLeave: SickLeave;
 }
 
 export type Entry =
@@ -74,5 +74,5 @@ export type EntryFormValues = Omit<BaseEntry, "id"> & {
   healthCheckRating?: HealthCheckRating;
   discharge?: Discharge;
   employerName?: string;
-  sickLeave?: sickLeave;
+  sickLeave?: SickLeave;
 };
