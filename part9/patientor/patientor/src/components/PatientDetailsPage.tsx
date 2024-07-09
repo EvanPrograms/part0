@@ -56,9 +56,9 @@ const PatientDetailsPage = () => {
       case "Hospital":
         return <HospitalEntryDetails entry={entry as HospitalEntry} getDiagnosisName={getDiagnosisName} />;
       case "OccupationalHealthcare":
-        return <OccupationalHealthcareEntryDetails entry={entry as OccupationalHealthcareEntry} />;
+        return <OccupationalHealthcareEntryDetails entry={entry as OccupationalHealthcareEntry} getDiagnosisName={getDiagnosisName}/>;
       case "HealthCheck":
-        return <HealthCheckEntryDetails entry={entry as HealthCheckEntry} />;
+        return <HealthCheckEntryDetails entry={entry as HealthCheckEntry} getDiagnosisName={getDiagnosisName}/>;
       default:
         return assertNever(entry);
     }
@@ -113,37 +113,6 @@ const PatientDetailsPage = () => {
           <div key={entry.id} className="entry-box">
             <EntryDetails entry={entry} getDiagnosisName={getDiagnosisName} />
           </div>
-          // <div key={index}>
-          //   <p className="no-margin">
-          //     {entry.date} 
-          //     {' '}{entry.type === "HealthCheck" && <MedicalServicesIcon />}
-          //     {' '}{entry.type === "OccupationalHealthcare" && (
-          //       <>
-          //         <WorkIcon />{' '}
-          //         {typeof (entry as OccupationalHealthcareEntry).employerName !== 'undefined' &&
-          //           <em>{(entry as OccupationalHealthcareEntry).employerName}</em>}
-          //       </>
-          //     )}
-          //     {' '}{entry.type === "Hospital" && <LocalHospitalIcon />}
-          //   </p>
-          //   <p className="no-margin"><em>{entry.description}</em></p>
-          //   {entry.type === "HealthCheck" && entry.healthCheckRating === 0 && <FavoriteIcon style={({ color: 'green' })}/>}
-          //   {entry.type === "HealthCheck" && entry.healthCheckRating === 1 && <FavoriteIcon style={({ color: 'yellow' })}/>}
-          //   {entry.type === "HealthCheck" && entry.healthCheckRating === 2 && <FavoriteIcon style={({ color: 'orange' })}/>}
-          //   {entry.type === "HealthCheck" && entry.healthCheckRating === 3 && <FavoriteIcon style={({ color: 'red' })}/>}
-          //   <p>diagnose by {entry.specialist}</p>
-          //   <ul>
-          //   {entry.diagnosisCodes && (
-          //     <ul>
-          //       {entry.diagnosisCodes.map((code, index) => (
-          //           <li key={index}>
-          //             {code} - {getDiagnosisName(code)}
-          //           </li>
-          //       ))}
-          //     </ul>
-          //   )}
-          //   </ul>
-          // </div>
         ))
       ) : (
         <p>No entries</p>
@@ -153,7 +122,7 @@ const PatientDetailsPage = () => {
 };
 
 export default PatientDetailsPage;
-function assertNever(entry: never): React.ReactNode {
+function assertNever(_entry: never): React.ReactNode {
   throw new Error("Function not implemented.");
 }
 
