@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { StyleSheet, View } from 'react-native';
 import RepositoryList from './RepositoryList';
 import AppBar from './AppBar';
