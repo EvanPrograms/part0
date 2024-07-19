@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import React from 'react';
 
-=======
->>>>>>> 45ba3ce210fb512916f1b078adc08b3e81ade1ac
 import { FlatList, View, StyleSheet } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 
