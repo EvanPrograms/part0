@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Pressable, Text, StyleSheet } from "react-native";
 import theme from "../theme";
+import { Link } from "react-router-native";
 
 const styles = StyleSheet.create({
   tabText: {
@@ -11,13 +12,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const onPressFunction = () => {
+const onPressFunction = (children, link) => {
   console.log('yay!')
 }
 
-const AppBarTab = ({children}) => (
-  <Pressable onPress={onPressFunction}>
-      <Text style={styles.tabText}>{children}</Text>
+const AppBarTab = ({children, link}) => (
+  <Pressable onPress={onPressFunction(children)}>
+      <Link to={link}>
+        <Text style={styles.tabText}>{children}</Text>
+      </Link>
   </Pressable>
 );
 
