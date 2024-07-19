@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 import React from 'react';
 
 import { View, Text } from 'react-native';
+=======
+import { FlatList, View, StyleSheet, Text } from 'react-native';
+>>>>>>> 45ba3ce210fb512916f1b078adc08b3e81ade1ac
 
 
 const RepositoryItem = ({ 
