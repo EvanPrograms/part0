@@ -6,7 +6,8 @@ const theme = {
     appBar: '#24292e',
     textWhite: '#ffffff',
     mainBackground: '#e1e4e8',
-    placeholder: '#bab6b6'
+    placeholder: '#bab6b6',
+    error: '#d73a4a'
   },
   fontSizes: {
     body: 14,
