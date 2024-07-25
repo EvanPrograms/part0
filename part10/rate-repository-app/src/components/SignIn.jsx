@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: theme.colors.textSecondary,
     marginVertical: 5,
-    padding: 10
+    padding: 10,
+    fontFamily: theme.fonts.main,
   },
   textInput: {
     color: theme.colors.primary
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
   }, 
   buttonText: {
     color: theme.colors.textWhite,
+    fontFamily: theme.fonts.main
   },
   errors: {
     color: theme.colors.error

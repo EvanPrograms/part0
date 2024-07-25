@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
   tabText: {
     color: theme.colors.textWhite,
     padding: 20,
-    fontSize: theme.fontSizes.subheading
+    fontSize: theme.fontSizes.subheading,
+    fontFamily: theme.fonts.main
   },
 });
 
