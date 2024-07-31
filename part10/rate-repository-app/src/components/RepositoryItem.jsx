@@ -69,7 +69,7 @@ const RepositoryItem = ({
   ownerAvatarUrl
   }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="repositoryItem">
       <View style={styles.flexContainer}>
         <Image
           style={styles.avatar}
