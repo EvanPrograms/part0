@@ -1,6 +1,6 @@
 import React from 'react';
 import { NativeRouter } from 'react-router-native';
-// import { StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { ApolloProvider } from '@apollo/client';
 import Constants from 'expo-constants';
 
@@ -24,7 +24,7 @@ const App = () => {
           </AuthStorageContext.Provider>
         </ApolloProvider>
       </NativeRouter>
-      {/* <StatusBar style="auto" /> */}
+      <StatusBar style="auto" />
     </>
   );
 };

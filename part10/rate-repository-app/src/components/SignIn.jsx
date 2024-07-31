@@ -1,6 +1,6 @@
 import Text from './Text';
 import React from 'react';
-import { View, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet, Platform } from 'react-native';
 import { useFormik } from 'formik';
 import theme from '../theme';
 import * as yup from 'yup';
@@ -107,13 +107,22 @@ const SignIn = () => {
   const [signIn] = useSignIn();
   const navigate = useNavigate();
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values, { resetForm }) => {
     const { username, password } = values;
 
     try {
       const { data } = await signIn({ username, password });
-      console.log(data);
-      navigate('/')
+      // TODO : TEMP FIX ANDROID BUG Amplify first signin redirect
+      if (Platform.OS === 'android') {
+        setTimeout(async () => {
+          await signIn({ username, password });
+        }, 1000);
+      }
+      console.log('Sign in successful:', data);
+      if (data) {
+        navigate('/');
+        resetForm();
+      }
     } catch (e) {
       console.log('Sign in error:', e);
     }
