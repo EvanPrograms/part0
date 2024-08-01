@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { View, Image } from 'react-native';
+import { View, Image, Pressable } from 'react-native';
 import Text from './Text'
 import { FlatList, StyleSheet } from 'react-native';
 import theme from '../theme';
 import InfoBox from './InfoBox';
+import { Route, Routes, Navigate, Link } from 'react-router-native';
+import * as Linking from 'expo-linking';
 
 const styles = StyleSheet.create({
   flexContainer: {
@@ -21,7 +23,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'center',
-    gap: 40
+    gap: 40,
+    // marginBottom: 10
+  },
+  flexGithubContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    padding: 20,
+    // flex: 1,
   },
   container: {
     paddingTop: 10,
@@ -47,6 +57,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderRadius: 5,
     alignSelf: 'flex-start'
+  },
+  githubBox: {
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.textWhite,
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50
   }
 })
 
@@ -66,9 +87,19 @@ const RepositoryItem = ({
   forksCount,
   reviewCount,
   ratingAverage,
-  ownerAvatarUrl
+  ownerAvatarUrl,
+  url,
+  id,
+  githubLink
   }) => {
+
+  const onPressFunction = (url) => {
+    Linking.openURL(url);
+    console.log('onpress for url', url);
+  }
+
   return (
+    
     <View style={styles.container} testID="repositoryItem">
       <View style={styles.flexContainer}>
         <Image
@@ -91,7 +122,15 @@ const RepositoryItem = ({
         <InfoBox count={formatNumber(reviewCount)} info="Reviews"/>
         <InfoBox count={ratingAverage} info="Rating"/>
       </View>
+      {githubLink &&
+        <View style={styles.flexGithubContainer}>
+          <Pressable onPress={() => onPressFunction(url)} style={styles.githubBox}>
+            <Text fontWeight="bold" color="textWhite">Open in GitHub</Text>
+          </Pressable>
+        </View>
+      }
     </View>
+
   );
 }
 
