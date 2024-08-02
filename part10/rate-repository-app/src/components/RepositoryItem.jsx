@@ -68,7 +68,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50
-  }
+  },
+  separator: {
+    height: 10,
+  },
 })
 
 const formatNumber = (num) => {
@@ -90,13 +93,15 @@ const RepositoryItem = ({
   ownerAvatarUrl,
   url,
   id,
-  githubLink
+  detailed
   }) => {
 
   const onPressFunction = (url) => {
     Linking.openURL(url);
     console.log('onpress for url', url);
   }
+
+  const ItemSeparator = () => <View style={styles.separator} />;
 
   return (
     
@@ -122,7 +127,7 @@ const RepositoryItem = ({
         <InfoBox count={formatNumber(reviewCount)} info="Reviews"/>
         <InfoBox count={ratingAverage} info="Rating"/>
       </View>
-      {githubLink &&
+      {detailed &&
         <View style={styles.flexGithubContainer}>
           <Pressable onPress={() => onPressFunction(url)} style={styles.githubBox}>
             <Text fontWeight="bold" color="textWhite">Open in GitHub</Text>

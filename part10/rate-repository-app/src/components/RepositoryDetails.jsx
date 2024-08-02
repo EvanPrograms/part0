@@ -1,12 +1,13 @@
 import React from "react";
 import RepositoryItem from "./RepositoryItem";
 import { useParams } from "react-router-native";
-import { SINGLE_REPOSITORY } from "../graphql/queries";
+import { SINGLE_REPOSITORY, GET_REVIEWS } from "../graphql/queries";
 import { useQuery } from "@apollo/client";
 import { View, Image, ActivityIndicator } from 'react-native';
 import { FlatList, StyleSheet } from 'react-native';
 import theme from '../theme';
 import Text from './Text'
+import ReviewItem from "./ReviewItem";
 
 const styles = StyleSheet.create({
   flexContainer: {
@@ -59,6 +60,9 @@ const RepositoryDetails = () => {
     variables: { idToSearch: id }
   });
 
+  
+
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -75,8 +79,40 @@ const RepositoryDetails = () => {
     );
   }
 
+  if (!data || !data.repository) {
+    return (
+      <View style={styles.container}>
+        <Text>No data available</Text>
+      </View>
+    );
+  }
+
+  // const { reviews, reviewLoading, reviewError } = useQuery(GET_REVIEWS, {
+  //   variables: { idToSearch: id }
+  // })
+
+  // const reviewNodes = reviews
+  // ? reviews.repository.reviews.edges.map(edge => edge.node)
+  // : [];
+  // const reviewNodes = reviews.repository.reviews.edges.map(edge => edge.node);
+  // const reviewNodes = reviews?.repository?.reviews?.edges?.map(edge => edge.node) || [];
+  
+  // const reviews = data.reviews ? data.reviews.edges.map(e => e.node) : [];
+  const reviews = data.repository.reviews.edges.map(edge => edge.node);
+  // const reviews = data.repository.reviews?.edges?.map(edge => edge.node) || [];
+  // const reviews = ['yes', 'yes']
+  console.log('reviews', reviews)
+
   return (
-    <RepositoryItem {...data.repository} githubLink={true}/>
+    <FlatList
+      data={reviews}
+      renderItem={({ item }) => <ReviewItem review={item} />}
+      keyExtractor={({ id }) => id}
+      ListHeaderComponent={() => <RepositoryItem {...data.repository} detailed={true} />}
+      // ...
+    />
+
+    // <RepositoryItem {...data.repository} detailed={true} reviews={reviews}/>
   )
 }
 

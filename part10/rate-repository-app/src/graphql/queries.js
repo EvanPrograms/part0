@@ -43,6 +43,40 @@ export const SINGLE_REPOSITORY = gql`
       stargazersCount
       id
       url
+      reviews {
+        edges {
+          node {
+            text
+            id
+            user {
+              username
+            }
+            createdAt
+            rating
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_REVIEWS = gql`
+  query($idToSearch: ID!) {
+    repository(id: $idToSearch) {
+      reviews {
+        edges {
+          node {
+            id
+            text
+            rating
+            createdAt
+            user {
+              id
+              username
+            }
+          }
+        }
+      }
     }
   }
 `;
