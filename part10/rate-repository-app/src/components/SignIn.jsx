@@ -99,11 +99,6 @@ export const SignInForm = ({ onSubmit }) => {
 };
 
 const SignIn = () => {
-  // const onSubmit = values => {
-  //   if (values.username && values.password) {
-  //     console.log(values);
-  //   }
-  // }
   const [signIn] = useSignIn();
   const navigate = useNavigate();
 

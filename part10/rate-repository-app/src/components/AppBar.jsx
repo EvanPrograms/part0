@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { View, StyleSheet, ScrollView, Text, Pressable } from 'react-native';
 import Constants from 'expo-constants';
@@ -13,6 +13,12 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
     backgroundColor: theme.colors.appBar
+  },
+  signOutText: {
+    padding: 20,
+    color: theme.colors.textWhite,
+    fontSize: theme.fontSizes.subheading,
+    // fontWeight: theme.fontWeights.bold,
   },
   // ...
 });
@@ -33,22 +39,21 @@ const AppBar = () => {
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
-        <AppBarTab link='/'>Repositories</AppBarTab>
+        <AppBarTab link='/' >Repositories</AppBarTab>
+        {/* <AppBarTab link='/reviewform'>Create a Review</AppBarTab> */}
         {data?.me ? (
-          <Pressable onPress={signOut}>
-            <Text
-              fontSize="subheading"
-              fontWeight="bold"
-              color="white"
-              style={{ padding: 20 }}
-            >
-              Sign out
-            </Text>
-          </Pressable>
+          <Fragment>
+            <AppBarTab link='/reviewform'>Create a Review</AppBarTab>
+            <Pressable onPress={signOut}>
+              <Text style={styles.signOutText}
+              >
+                Sign out
+              </Text>
+            </Pressable>
+          </Fragment>
         ) : (
           <AppBarTab link="/signin">Sign in</AppBarTab>
         )}
-        {/* <AppBarTab link='/signin'>Sign In</AppBarTab> */}
       </ScrollView>
     </View>
   );
