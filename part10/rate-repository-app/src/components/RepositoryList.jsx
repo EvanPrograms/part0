@@ -7,6 +7,8 @@ import useRepositories from '../hooks/useRepositories';
 import { Link } from 'react-router-native';
 import {Picker} from '@react-native-picker/picker';
 import Text from './Text';
+import { Searchbar } from 'react-native-paper';
+import { useDebounce } from 'use-debounce';
 
 const styles = StyleSheet.create({
   separator: {
@@ -17,6 +19,19 @@ const styles = StyleSheet.create({
 const ItemSeparator = () => <View style={styles.separator} />;
 
 export const RepositoryListContainer = ({ repositories, loading, error }) => {
+  renderHeader = () => {
+    const [searchQuery, setSearchQuery] = React.useState('');
+    const props = this.props;
+
+    return (
+      <Searchbar
+      placeholder="Search"
+      onChangeText={setSearchQuery}
+      value={searchQuery}
+    />
+    )
+  }
+
   const repositoryNodes = repositories
   ? repositories.edges.map(edge => edge.node)
   : [];
@@ -38,18 +53,27 @@ export const RepositoryListContainer = ({ repositories, loading, error }) => {
         <Link to={`/repository/${item.id}`}>
           <RepositoryItem {...item} />
         </Link>
-    )}
+      )}
+      // ListHeaderComponent={this.renderHeader}
     />
   );
 };
 
 const RepositoryList = () => {
   const [principle, setPrinciple] = useState('latest')
-  const { repositories, loading, error } = useRepositories(principle);
-  // const [selectedLanguage, setSelectedLanguage] = useState();
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQueryDebounce] = useDebounce(searchQuery, 500);
+  const { repositories, loading, error } = useRepositories(principle, searchQueryDebounce);
+  
+  
 
   return (
     <View>
+      <Searchbar
+      placeholder="Search"
+      onChangeText={setSearchQuery}
+      value={searchQuery}
+      />
       <Picker
         selectedValue={principle}
         onValueChange={(itemValue) =>

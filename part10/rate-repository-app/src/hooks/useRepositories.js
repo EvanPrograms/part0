@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { GET_REPOSITORIES } from '../graphql/queries';
 
-const useRepositories = (principle) => {
+const useRepositories = (principle, searchKeyword) => {
   let ordering = {};
   switch (principle) {
     case 'latest':
@@ -21,7 +21,8 @@ const useRepositories = (principle) => {
 
   const { data, loading, error } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: 'cache-and-network',
-    variables: ordering
+    variables: {...ordering, searchKeyword}
+
   })
 
   const repositories = data ? data.repositories : null;
