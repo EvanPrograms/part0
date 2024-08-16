@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 })
 
 
-const ReviewItem = ({ review }) => {
+const ReviewItem = ({ review, me }) => {
   // Single review item
 
   // const { reviews, loading, error } = useQuery(GET_REVIEWS, {
@@ -117,7 +117,11 @@ const ReviewItem = ({ review }) => {
           <Text style={{ color: theme.colors.primary, fontWeight: 'bold' }}>{review.rating}</Text>
         </View>
         <View style={styles.flexReviewSubContainer}>
-          <Text fontWeight='bold'>{review.user.username}</Text>
+          {me ? (
+            <Text fontWeight='bold'>{review.repository.ownerName}/{review.repository.name}</Text>
+          ) : (
+            <Text fontWeight='bold'>{review.user.username}</Text>
+          )}
           <Text color='textSecondary'>{dateFormatted}</Text>
           <Text>{review.text}</Text>
           {/* <Text>yes</Text> */}

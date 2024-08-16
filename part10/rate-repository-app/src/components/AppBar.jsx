@@ -44,6 +44,7 @@ const AppBar = () => {
         {data?.me ? (
           <Fragment>
             <AppBarTab link='/reviewform'>Create a Review</AppBarTab>
+            <AppBarTab link='myreviews'>My Reviews</AppBarTab>
             <Pressable onPress={signOut}>
               <Text style={styles.signOutText}
               >
