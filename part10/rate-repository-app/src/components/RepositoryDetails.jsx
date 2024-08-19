@@ -56,9 +56,9 @@ const styles = StyleSheet.create({
 const RepositoryDetails = () => {
   const { id } = useParams();
   console.log('repo ID', id)
-  const { data, loading, error } = useQuery(SINGLE_REPOSITORY, {
-    variables: { idToSearch: id },
-    fetchPolicy: 'cache-and-network'
+  const { data, loading, error, fetchMore, ...result } = useQuery(SINGLE_REPOSITORY, {
+    variables: { idToSearch: id, first: 3 },
+    fetchPolicy: 'cache-and-network',
   });
 
   
@@ -102,7 +102,28 @@ const RepositoryDetails = () => {
   const reviews = data.repository.reviews.edges.map(edge => edge.node);
   // const reviews = data.repository.reviews?.edges?.map(edge => edge.node) || [];
   // const reviews = ['yes', 'yes']
-  console.log('reviews', reviews)
+  // console.log('reviews', reviews)
+
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repository.reviews.pageInfo.hasNextPage;
+
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        after: data.repository.reviews.pageInfo.endCursor,
+        idToSearch: id,
+        first: 3
+      },
+    });
+  };
+
+  const onEndReach = () => {
+    console.log('You have reached the end of reviews')
+    handleFetchMore();
+  }
 
   return (
     <FlatList
@@ -110,6 +131,8 @@ const RepositoryDetails = () => {
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ListHeaderComponent={() => <RepositoryItem {...data.repository} detailed={true} />}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
       // ...
     />
 

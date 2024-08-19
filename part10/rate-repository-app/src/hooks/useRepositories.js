@@ -19,16 +19,41 @@ const useRepositories = (principle, searchKeyword) => {
       ordering = { "orderBy": "CREATED_AT", "orderDirection": "DESC" };
   }
 
-  const { data, loading, error } = useQuery(GET_REPOSITORIES, {
+  const { data, loading, error, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: 'cache-and-network',
-    variables: {...ordering, searchKeyword}
+    variables: {...ordering, searchKeyword, first: 5}
 
-  })
+  });
 
-  const repositories = data ? data.repositories : null;
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage;
+
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...ordering,
+        searchKeyword,
+        first: 8
+      },
+    });
+  };
+
+  // const repositories = data ? data.repositories : null;
   
 
-  return { repositories, loading, error };
+  // return { repositories, loading, error };
+
+  return {
+    repositories: data?.repositories,
+    fetchMore: handleFetchMore,
+    loading,
+    error,
+    ...result,
+  };
 };
 
 export default useRepositories;

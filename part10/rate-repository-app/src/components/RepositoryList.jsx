@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ repositories, loading, error }) => {
+export const RepositoryListContainer = ({ repositories, loading, error, onEndReach }) => {
   renderHeader = () => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const props = this.props;
@@ -54,6 +54,8 @@ export const RepositoryListContainer = ({ repositories, loading, error }) => {
           <RepositoryItem {...item} />
         </Link>
       )}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
       // ListHeaderComponent={this.renderHeader}
     />
   );
@@ -63,9 +65,15 @@ const RepositoryList = () => {
   const [principle, setPrinciple] = useState('latest')
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchQueryDebounce] = useDebounce(searchQuery, 500);
-  const { repositories, loading, error } = useRepositories(principle, searchQueryDebounce);
+  const { repositories, loading, error, fetchMore } = useRepositories({
+    first: 1,
+    principle, 
+    searchQueryDebounce});
   
-  
+  const onEndReach = () => {
+    console.log('You have reached the end of the list');
+    fetchMore();
+  }
 
   return (
     <View>
@@ -83,7 +91,12 @@ const RepositoryList = () => {
         <Picker.Item label="Highest Rated Repositories" value="high" />
         <Picker.Item label="Lowest Rated Repositories" value="low" />
       </Picker>
-      <RepositoryListContainer repositories={repositories} loading={loading} error={error}/>
+      <RepositoryListContainer 
+        repositories={repositories} 
+        loading={loading} 
+        error={error}
+        onEndReach={onEndReach}
+        />
     </View>
   )
 };
