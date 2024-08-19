@@ -9,7 +9,8 @@ const theme = {
     textWhite: '#ffffff',
     mainBackground: '#e1e4e8',
     placeholder: '#bab6b6',
-    error: '#d73a4a'
+    error: '#d73a4a',
+    delete: '#b74f4f'
   },
   fonts: {
     main: Platform.select({
